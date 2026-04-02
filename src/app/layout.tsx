@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Sora } from "next/font/google";
+import { Montserrat, Open_Sans } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const sora = Sora({
-  variable: "--font-sora",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${sora.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${openSans.variable}`}>
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   );

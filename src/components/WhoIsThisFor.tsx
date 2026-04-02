@@ -46,8 +46,8 @@ export default function WhoIsThisFor() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {audiences.map((item, i) => (
-            <div key={item.title} className="glass group rounded-2xl p-6 transition-all duration-300 hover:bg-white/[0.06] hover:shadow-[0_0_40px_rgba(0,100,173,0.1)]" style={{ animation: `fade-up 0.6s ease-out ${0.15 * i}s both` }}>
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-cobalt/10 text-cobalt transition-all duration-300 group-hover:bg-cobalt group-hover:text-white group-hover:shadow-[0_0_20px_rgba(0,100,173,0.4)]">
+            <div key={item.title} className="glass group rounded-2xl p-6 transition-all duration-300 hover:bg-white/[0.06] hover:shadow-[0_0_40px_rgba(0,74,173,0.1)]" style={{ animation: `fade-up 0.6s ease-out ${0.15 * i}s both` }}>
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-cobalt/10 text-cobalt transition-all duration-300 group-hover:bg-cobalt group-hover:text-white group-hover:shadow-[0_0_20px_rgba(0,74,173,0.4)]">
                 {item.icon}
               </div>
               <div className="mb-2 inline-block rounded-full bg-white/5 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-text-muted">{item.tag}</div>

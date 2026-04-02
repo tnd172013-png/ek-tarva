@@ -4,7 +4,7 @@ export default function ScarcityBanner() {
   return (
     <section className="relative overflow-hidden px-6 py-14">
       <div className="absolute inset-0 bg-bg-elevated" />
-      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,100,173,0.15), transparent)" }} />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,74,173,0.15), transparent)" }} />
 
       <div className="relative z-10 mx-auto max-w-2xl text-center">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.15em] text-amber-400">

@@ -1,39 +1,34 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Dark navy theme (inspired by reference) */
-  --color-bg-primary: #050D1A;
-  --color-bg-elevated: #0A1628;
-  --color-bg-subtle: #0F1E38;
-  --color-bg-card: #112040;
-
-  /* Brand accent */
-  --color-cobalt: #0064AD;
-  --color-cobalt-dark: #004F8A;
-  --color-cobalt-light: #0078CC;
-  --color-cobalt-glow: #0088ee;
+  /* Brand Kit Colors — exact from Ektarva */
+  --color-cobalt: #004AAD;
+  --color-cobalt-dark: #003A8A;
+  --color-cobalt-light: #0058CC;
   --color-light-blue: #BFD9FF;
-  --color-cyan-accent: #00d4ff;
-
-  /* Neutrals */
   --color-light-grey: #F1F2F2;
-  --color-pastel-grey: #C5C5B7;
-  --color-grey-azure: #8F7587;
+  --color-pastel-grey: #C7C3B7;
+  --color-grey-azure: #4F7387;
   --color-dark-grey: #545454;
 
-  /* Text on dark */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #b0b8c8;
-  --color-text-muted: #7a86a0;
-  --color-text-ghost: #3d4a63;
+  /* Dark theme derived from brand */
+  --color-bg-primary: #041530;
+  --color-bg-elevated: #071E3D;
+  --color-bg-subtle: #0C2849;
+  --color-bg-card: #0E2D50;
 
-  /* Glass */
-  --color-glass-bg: rgba(255, 255, 255, 0.04);
-  --color-glass-border: rgba(255, 255, 255, 0.09);
+  /* Accent */
+  --color-cyan-accent: #5BA3E6;
+
+  /* Text on dark */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #BFD9FF;
+  --color-text-muted: #7A9BC0;
+  --color-text-ghost: #3D5A7A;
 
   /* Fonts */
-  --font-sans: var(--font-space-grotesk);
-  --font-heading: var(--font-sora);
+  --font-sans: var(--font-open-sans);
+  --font-heading: var(--font-montserrat);
 }
 
 html {
@@ -51,34 +46,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::selection {
-  background: rgba(0, 100, 173, 0.5);
+  background: rgba(0, 74, 173, 0.5);
   color: #fff;
 }
 
 /* Glass card */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(191, 217, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(191, 217, 255, 0.08);
 }
 
 .glass-elevated {
-  background: rgba(255, 255, 255, 0.055);
+  background: rgba(191, 217, 255, 0.06);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(191, 217, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-/* Glow effects */
-.glow-cobalt {
-  box-shadow: 0 0 20px rgba(0, 100, 173, 0.4), 0 0 60px rgba(0, 100, 173, 0.15);
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #00d4ff 0%, #0064AD 50%, #BFD9FF 100%);
+  background: linear-gradient(135deg, #BFD9FF 0%, #004AAD 60%, #4F7387 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -87,8 +77,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Tech grid background */
 .tech-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(191, 217, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(191, 217, 255, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -104,14 +94,9 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-}
-
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 100, 173, 0.4), 0 0 60px rgba(0, 100, 173, 0.15); }
-  50% { box-shadow: 0 0 30px rgba(0, 100, 173, 0.6), 0 0 80px rgba(0, 100, 173, 0.25); }
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 74, 173, 0.4), 0 0 60px rgba(0, 74, 173, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(0, 74, 173, 0.6), 0 0 80px rgba(0, 74, 173, 0.25); }
 }
 
 /* Reduced motion */

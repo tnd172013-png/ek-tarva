@@ -11,14 +11,14 @@ export default function Hero() {
           className="absolute inset-0 opacity-50"
           style={{
             background:
-              "radial-gradient(ellipse 80% 50% at 20% 40%, rgba(0,100,173,0.35), transparent), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,212,255,0.15), transparent), radial-gradient(ellipse 50% 60% at 50% 90%, rgba(0,100,173,0.25), transparent)",
+              "radial-gradient(ellipse 80% 50% at 20% 40%, rgba(0,74,173,0.4), transparent), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(79,115,135,0.2), transparent), radial-gradient(ellipse 50% 60% at 50% 90%, rgba(0,74,173,0.3), transparent)",
           }}
         />
         <div
           className="absolute inset-0 opacity-25"
           style={{
             background:
-              "linear-gradient(45deg, rgba(0,100,173,0.3), rgba(0,212,255,0.1), rgba(191,217,255,0.1), rgba(0,100,173,0.2))",
+              "linear-gradient(45deg, rgba(0,74,173,0.3), rgba(79,115,135,0.15), rgba(191,217,255,0.1), rgba(0,74,173,0.2))",
             backgroundSize: "400% 400%",
             animation: "aurora 12s ease-in-out infinite",
           }}
@@ -30,19 +30,19 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 flex max-w-4xl flex-col items-center text-center">
-        <div className="mb-6 animate-[fade-up_0.8s_ease-out_both]">
+        <div className="-mb-2 animate-[fade-up_0.8s_ease-out_both]">
           <Image
             src="/images/logo-light.png"
             alt="Ektarva"
-            width={240}
-            height={80}
+            width={280}
+            height={90}
             priority
-            className="h-auto w-48 opacity-90 md:w-56"
+            className="h-auto w-44 opacity-90 md:w-60"
           />
         </div>
 
-        <div className="mb-5 inline-flex animate-[fade-up_0.8s_ease-out_0.2s_both] items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-cyan-accent">
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan-accent animate-pulse" />
+        <div className="mb-3 inline-flex animate-[fade-up_0.8s_ease-out_0.2s_both] items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-light-blue">
+          <span className="h-1.5 w-1.5 rounded-full bg-light-blue animate-pulse" />
           Live Hiring Event
         </div>
 
@@ -64,7 +64,7 @@ export default function Hero() {
 
         <a
           href="#register"
-          className="group relative mb-10 inline-flex animate-[fade-up_0.8s_ease-out_0.7s_both] items-center gap-3 overflow-hidden rounded-full bg-cobalt px-8 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,100,173,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,100,173,0.6)] hover:scale-[1.03]"
+          className="group relative mb-10 inline-flex animate-[fade-up_0.8s_ease-out_0.7s_both] items-center gap-3 overflow-hidden rounded-full bg-cobalt px-8 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.6)] hover:scale-[1.03]"
         >
           <span className="relative z-10">Book Your Spot for ₹199</span>
           <svg

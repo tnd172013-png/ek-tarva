@@ -148,13 +148,13 @@ export default function RegistrationForm() {
   }
 
   const inputClasses =
-    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-text-ghost outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,100,173,0.15)]";
+    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-text-ghost outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
 
   return (
     <section id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 40% 50% at 50% 60%, rgba(0,100,173,0.08), transparent)" }}
+        style={{ background: "radial-gradient(ellipse 40% 50% at 50% 60%, rgba(0,74,173,0.08), transparent)" }}
       />
 
       <div className="relative z-10 mx-auto max-w-lg">
@@ -216,7 +216,7 @@ export default function RegistrationForm() {
             <button
               type="submit"
               disabled={status === "processing"}
-              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,100,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,100,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {status === "processing" ? "Processing..." : "Proceed to Payment (₹199)"}
             </button>

@@ -23,7 +23,7 @@ export default function HowItWorks() {
             {steps.map((step, i) => (
               <div key={step.num} className="group flex items-start gap-5" style={{ animation: `fade-up 0.6s ease-out ${0.15 * i}s both` }}>
                 <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center md:h-14 md:w-14">
-                  <div className="absolute inset-0 rounded-xl bg-bg-primary border border-white/10 transition-all duration-300 group-hover:border-cobalt/50 group-hover:shadow-[0_0_25px_rgba(0,100,173,0.3)]" />
+                  <div className="absolute inset-0 rounded-xl bg-bg-primary border border-white/10 transition-all duration-300 group-hover:border-cobalt/50 group-hover:shadow-[0_0_25px_rgba(0,74,173,0.3)]" />
                   <span className="relative text-sm font-bold text-cobalt md:text-base">{step.num}</span>
                 </div>
                 <div className="glass rounded-xl px-5 py-4 flex-1 transition-all duration-300 group-hover:bg-white/[0.05]">

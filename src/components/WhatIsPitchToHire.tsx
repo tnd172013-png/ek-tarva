@@ -52,7 +52,7 @@ export default function WhatIsPitchToHire() {
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-text-secondary md:text-base">
             A live hiring experience where companies don&apos;t just post jobs —
-            they <span className="font-semibold text-cyan-accent">pitch them</span>.
+            they <span className="font-semibold text-light-blue">pitch them</span>.
             You&apos;ll hear directly from hiring teams about:
           </p>
         </div>
@@ -61,10 +61,10 @@ export default function WhatIsPitchToHire() {
           {items.map((item, i) => (
             <div
               key={item.title}
-              className="glass group rounded-2xl p-5 text-center transition-all duration-300 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(0,100,173,0.15)]"
+              className="glass group rounded-2xl p-5 text-center transition-all duration-300 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(0,74,173,0.15)]"
               style={{ animation: `fade-up 0.6s ease-out ${0.1 * i}s both` }}
             >
-              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-cobalt/10 text-cobalt transition-all duration-300 group-hover:bg-cobalt group-hover:text-white group-hover:shadow-[0_0_20px_rgba(0,100,173,0.4)]">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-cobalt/10 text-cobalt transition-all duration-300 group-hover:bg-cobalt group-hover:text-white group-hover:shadow-[0_0_20px_rgba(0,74,173,0.4)]">
                 {item.icon}
               </div>
               <h3 className="mb-1.5 text-base font-semibold text-white">{item.title}</h3>
