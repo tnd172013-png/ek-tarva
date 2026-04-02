@@ -8,7 +8,7 @@ export default function WhyThisWorks() {
     <section className="relative bg-bg-elevated px-6 py-16 md:py-20">
       <div className="mx-auto max-w-4xl">
         <div className="mb-10 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">The Difference</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">The Difference</p>
           <h2 className="text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">Why This Works</h2>
         </div>
 

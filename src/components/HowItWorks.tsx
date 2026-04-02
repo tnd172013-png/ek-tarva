@@ -12,7 +12,7 @@ export default function HowItWorks() {
     <section className="relative bg-bg-elevated px-6 py-16 md:py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">The Process</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">The Process</p>
           <h2 className="text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">How It Works</h2>
         </div>
 

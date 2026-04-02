@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg-primary px-6 py-16">
+    <section className="relative flex min-h-screen flex-col items-center justify-start overflow-hidden bg-bg-primary px-6 pt-12 pb-10 md:pt-16">
       {/* Aurora gradient background */}
       <div className="pointer-events-none absolute inset-0">
         <div
@@ -29,15 +29,15 @@ export default function Hero() {
       <div className="tech-grid pointer-events-none absolute inset-0" />
 
       {/* Content */}
-      <div className="relative z-10 flex max-w-4xl flex-col items-center text-center">
-        <div className="-mb-2 animate-[fade-up_0.8s_ease-out_both]">
+      <div className="relative z-10 mt-auto mb-auto flex max-w-4xl flex-col items-center text-center">
+        <div className="mb-6 animate-[fade-up_0.8s_ease-out_both]">
           <Image
             src="/images/logo-light.png"
             alt="Ektarva"
-            width={280}
-            height={90}
+            width={340}
+            height={115}
             priority
-            className="h-auto w-44 opacity-90 md:w-60"
+            className="h-auto w-52 opacity-90 md:w-72"
           />
         </div>
 
@@ -46,12 +46,12 @@ export default function Hero() {
           Live Hiring Event
         </div>
 
-        <h1 className="mb-5 animate-[fade-up_1s_ease-out_0.3s_both] text-[clamp(2.4rem,7vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-white">
+        <h1 className="mb-4 animate-[fade-up_1s_ease-out_0.3s_both] text-[clamp(2.8rem,8vw,5.5rem)] font-extrabold leading-[0.95] tracking-[-0.02em] text-white">
           Pitch to{" "}
           <span className="gradient-text">Hire</span>
         </h1>
 
-        <p className="mb-3 animate-[fade-up_0.8s_ease-out_0.5s_both] text-lg font-medium text-text-secondary md:text-xl">
+        <p className="mb-3 animate-[fade-up_0.8s_ease-out_0.5s_both] text-lg font-medium text-text-secondary md:text-2xl">
           Where companies pitch.
           <br />
           <span className="text-white">You choose where you get hired.</span>
@@ -64,7 +64,7 @@ export default function Hero() {
 
         <a
           href="#register"
-          className="group relative mb-10 inline-flex animate-[fade-up_0.8s_ease-out_0.7s_both] items-center gap-3 overflow-hidden rounded-full bg-cobalt px-8 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.6)] hover:scale-[1.03]"
+          className="group relative mb-10 inline-flex animate-[fade-up_0.8s_ease-out_0.7s_both] items-center gap-3 overflow-hidden rounded-full bg-cobalt px-10 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.6)] hover:scale-[1.03] md:text-lg"
         >
           <span className="relative z-10">Book Your Spot for ₹199</span>
           <svg
@@ -80,14 +80,14 @@ export default function Hero() {
         </a>
 
         {/* Stats */}
-        <div className="flex animate-[fade-up_0.8s_ease-out_0.9s_both] flex-wrap items-center justify-center gap-8 md:gap-12">
+        <div className="flex animate-[fade-up_0.8s_ease-out_0.9s_both] flex-wrap items-center justify-center gap-10 md:gap-16">
           {[
             { value: "20+", label: "Companies" },
             { value: "2-3 hrs", label: "Duration" },
             { value: "₹199", label: "Access Fee" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-xl font-bold text-white md:text-2xl">
+              <div className="text-2xl font-bold text-white md:text-3xl">
                 {stat.value}
               </div>
               <div className="text-[10px] uppercase tracking-[0.1em] text-text-muted">

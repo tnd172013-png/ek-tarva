@@ -40,7 +40,7 @@ export default function WhoIsThisFor() {
 
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">For You</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">For You</p>
           <h2 className="text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">Who This Is For</h2>
         </div>
 

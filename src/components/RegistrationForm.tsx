@@ -159,7 +159,7 @@ export default function RegistrationForm() {
 
       <div className="relative z-10 mx-auto max-w-lg">
         <div className="mb-10 text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">Register</p>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">Register</p>
           <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
             Secure Your Spot
           </h2>

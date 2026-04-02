@@ -14,7 +14,7 @@ export default function EventDetails() {
 
       <div className="mx-auto max-w-4xl">
         <div className="mb-3 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">Details</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">Details</p>
           <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">Event Details</h2>
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-cobalt/20 bg-cobalt/5 px-3 py-1 text-xs font-medium text-cobalt">
             <span className="h-1.5 w-1.5 rounded-full bg-cobalt animate-pulse" />
