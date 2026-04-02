@@ -122,7 +122,7 @@ export default function RegistrationForm() {
 
   if (status === "success") {
     return (
-      <section id="register" className="bg-bg-primary px-6 py-32 md:py-40">
+      <section id="register" className="bg-bg-primary px-6 py-16 md:py-20">
         <div className="mx-auto max-w-lg">
           <div className="glass-elevated rounded-3xl border border-emerald-500/20 p-10 text-center shadow-[0_0_60px_rgba(16,185,129,0.1)]">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
@@ -151,7 +151,7 @@ export default function RegistrationForm() {
     "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-text-ghost outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,100,173,0.15)]";
 
   return (
-    <section id="register" className="relative bg-bg-primary px-6 py-32 md:py-40">
+    <section id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
       <div
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(ellipse 40% 50% at 50% 60%, rgba(0,100,173,0.08), transparent)" }}
@@ -160,7 +160,7 @@ export default function RegistrationForm() {
       <div className="relative z-10 mx-auto max-w-lg">
         <div className="mb-10 text-center">
           <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-cobalt">Register</p>
-          <h2 className="mb-3 text-3xl font-bold tracking-[-0.02em] text-white md:text-5xl">
+          <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
             Secure Your Spot
           </h2>
           <p className="text-text-muted">If you&apos;re serious about getting hired, this is for you.</p>
