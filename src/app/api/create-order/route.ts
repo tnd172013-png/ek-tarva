@@ -4,9 +4,9 @@ import { getRazorpay } from "@/lib/razorpay";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { fullName, email, phone, experience } = body;
+    const { fullName, email, phone } = body;
 
-    if (!fullName || !email || !phone || !experience) {
+    if (!fullName || !email || !phone) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
         fullName,
         email,
         phone,
-        experience,
       },
     });
 

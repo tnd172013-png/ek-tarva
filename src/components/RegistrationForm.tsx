@@ -33,15 +33,14 @@ interface FormData {
   fullName: string;
   email: string;
   phone: string;
-  experience: string;
-  portfolio: string;
+  linkedin: string;
 }
 
 type FormStatus = "idle" | "processing" | "success" | "error";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState<FormData>({
-    fullName: "", email: "", phone: "", experience: "", portfolio: "",
+    fullName: "", email: "", phone: "", linkedin: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -131,13 +130,13 @@ export default function RegistrationForm() {
               </svg>
             </div>
             <h3 className="mb-2 text-2xl font-bold text-white">You&apos;re In!</h3>
-            <p className="mb-6 text-text-secondary">
+            <p className="mb-6 text-white/70">
               Your spot for <strong className="text-white">Pitch to Hire</strong> is confirmed.
             </p>
             <div className="glass rounded-xl p-5 text-left text-sm">
-              <p className="text-text-secondary"><span className="text-text-muted">Name:</span> <span className="text-white">{form.fullName}</span></p>
-              <p className="text-text-secondary"><span className="text-text-muted">Email:</span> <span className="text-white">{form.email}</span></p>
-              <p className="mt-4 text-xs text-text-muted">
+              <p className="text-white/70"><span className="text-white/50">Name:</span> <span className="text-white">{form.fullName}</span></p>
+              <p className="text-white/70"><span className="text-white/50">Email:</span> <span className="text-white">{form.email}</span></p>
+              <p className="mt-4 text-xs text-white/50">
                 We&apos;ll share the event link and details closer to the date. Screenshot this page for your records.
               </p>
             </div>
@@ -148,7 +147,7 @@ export default function RegistrationForm() {
   }
 
   const inputClasses =
-    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-text-ghost outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
+    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/40 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
 
   return (
     <section id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
@@ -159,54 +158,41 @@ export default function RegistrationForm() {
 
       <div className="relative z-10 mx-auto max-w-lg">
         <div className="mb-10 text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">Register</p>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Register</p>
           <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
             Secure Your Spot
           </h2>
-          <p className="text-text-muted">If you&apos;re serious about getting hired, this is for you.</p>
+          <p className="text-white/60">If you&apos;re serious about getting hired, this is for you.</p>
         </div>
 
         <div className="glass-elevated rounded-3xl p-8 md:p-10">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-text-secondary">
-                Full Name <span className="text-cobalt">*</span>
+              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/80">
+                Full Name <span className="text-white/40">*</span>
               </label>
               <input type="text" id="fullName" name="fullName" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
             </div>
 
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-text-secondary">
-                Email <span className="text-cobalt">*</span>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/80">
+                Email <span className="text-white/40">*</span>
               </label>
               <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
             </div>
 
             <div>
-              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-text-secondary">
-                Phone Number <span className="text-cobalt">*</span>
+              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-white/80">
+                Phone Number <span className="text-white/40">*</span>
               </label>
               <input type="tel" id="phone" name="phone" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="Your phone number" />
             </div>
 
             <div>
-              <label htmlFor="experience" className="mb-1.5 block text-sm font-medium text-text-secondary">
-                Experience Level <span className="text-cobalt">*</span>
+              <label htmlFor="linkedin" className="mb-1.5 block text-sm font-medium text-white/80">
+                LinkedIn Profile URL
               </label>
-              <select id="experience" name="experience" required value={form.experience} onChange={handleChange} className={inputClasses}>
-                <option value="" className="bg-bg-primary">Select your level</option>
-                <option value="student" className="bg-bg-primary">Student</option>
-                <option value="fresher" className="bg-bg-primary">Fresher</option>
-                <option value="0-1yr" className="bg-bg-primary">0-1 Year Experience</option>
-                <option value="1-2yr" className="bg-bg-primary">1-2 Years Experience</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="portfolio" className="mb-1.5 block text-sm font-medium text-text-secondary">
-                Portfolio / GitHub URL
-              </label>
-              <input type="url" id="portfolio" name="portfolio" value={form.portfolio} onChange={handleChange} className={inputClasses} placeholder="https://github.com/yourname" />
+              <input type="url" id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
             </div>
 
             {status === "error" && (
@@ -221,7 +207,7 @@ export default function RegistrationForm() {
               {status === "processing" ? "Processing..." : "Proceed to Payment (₹199)"}
             </button>
 
-            <p className="text-center text-xs text-text-ghost">Secure payment powered by Razorpay</p>
+            <p className="text-center text-xs text-white/40">Secure payment powered by Razorpay</p>
           </form>
         </div>
       </div>

@@ -13,7 +13,7 @@ export default function ScarcityBanner() {
         </div>
 
         <h3 className="mb-3 text-xl font-bold text-white md:text-2xl">Registrations are limited.</h3>
-        <p className="mb-8 text-sm text-text-muted">
+        <p className="mb-8 text-sm text-white/60">
           To keep the experience focused and valuable, once it&apos;s full, entries are closed.
         </p>
 

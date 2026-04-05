@@ -41,8 +41,8 @@ export default function Hero() {
           />
         </div>
 
-        <div className="mb-3 inline-flex animate-[fade-up_0.8s_ease-out_0.2s_both] items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-light-blue">
-          <span className="h-1.5 w-1.5 rounded-full bg-light-blue animate-pulse" />
+        <div className="mb-3 inline-flex animate-[fade-up_0.8s_ease-out_0.2s_both] items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/80">
+          <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
           Live Hiring Event
         </div>
 
@@ -51,51 +51,9 @@ export default function Hero() {
           <span className="gradient-text">Hire</span>
         </h1>
 
-        <p className="mb-3 animate-[fade-up_0.8s_ease-out_0.5s_both] text-lg font-medium text-text-secondary md:text-2xl">
-          Where companies pitch.
-          <br />
-          <span className="text-white">You choose where you get hired.</span>
+        <p className="mb-8 max-w-lg animate-[fade-up_0.8s_ease-out_0.5s_both] text-lg font-medium text-white md:text-2xl">
+          For frontend developers where 20+ companies pitch.
         </p>
-
-        <p className="mb-8 max-w-lg animate-[fade-up_0.8s_ease-out_0.6s_both] text-sm text-text-muted md:text-base">
-          A live hiring event for frontend developers to connect directly with
-          20+ companies.
-        </p>
-
-        <a
-          href="#register"
-          className="group relative mb-10 inline-flex animate-[fade-up_0.8s_ease-out_0.7s_both] items-center gap-3 overflow-hidden rounded-full bg-cobalt px-10 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.6)] hover:scale-[1.03] md:text-lg"
-        >
-          <span className="relative z-10">Book Your Spot for ₹199</span>
-          <svg
-            className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-          <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-        </a>
-
-        {/* Stats */}
-        <div className="flex animate-[fade-up_0.8s_ease-out_0.9s_both] flex-wrap items-center justify-center gap-10 md:gap-16">
-          {[
-            { value: "20+", label: "Companies" },
-            { value: "2-3 hrs", label: "Duration" },
-            { value: "₹199", label: "Access Fee" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-2xl font-bold text-white md:text-3xl">
-                {stat.value}
-              </div>
-              <div className="text-[10px] uppercase tracking-[0.1em] text-text-muted">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Bottom fade */}

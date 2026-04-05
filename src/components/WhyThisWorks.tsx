@@ -8,7 +8,7 @@ export default function WhyThisWorks() {
     <section className="relative bg-bg-elevated px-6 py-16 md:py-20">
       <div className="mx-auto max-w-4xl">
         <div className="mb-10 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">The Difference</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/70">The Difference</p>
           <h2 className="text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">Why This Works</h2>
         </div>
 
@@ -26,7 +26,7 @@ export default function WhyThisWorks() {
               {painPoints.map((p) => (
                 <li key={p} className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400/50" />
-                  <span className="text-sm text-text-secondary">{p}</span>
+                  <span className="text-sm text-white/70">{p}</span>
                 </li>
               ))}
             </ul>
@@ -47,7 +47,7 @@ export default function WhyThisWorks() {
                   <svg className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-sm text-text-secondary">{g}</span>
+                  <span className="text-sm text-white/70">{g}</span>
                 </li>
               ))}
             </ul>

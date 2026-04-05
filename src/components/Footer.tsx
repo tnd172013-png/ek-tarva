@@ -11,14 +11,14 @@ export default function Footer() {
           height={40}
           className="mx-auto mb-3 h-auto w-24 opacity-50"
         />
-        <p className="mb-8 text-sm italic text-text-ghost">
+        <p className="mb-8 text-sm italic text-white/40">
           One Root, Many Branches
         </p>
 
         <div className="mb-8 flex items-center justify-center gap-8">
           <a
             href="mailto:hello@ektarva.com"
-            className="text-sm text-text-muted transition-colors duration-300 hover:text-white"
+            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
           >
             Contact
           </a>
@@ -26,7 +26,7 @@ export default function Footer() {
             href="https://instagram.com/ektarva"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-text-muted transition-colors duration-300 hover:text-white"
+            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
           >
             Instagram
           </a>
@@ -34,13 +34,13 @@ export default function Footer() {
             href="https://linkedin.com/company/ektarva"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-text-muted transition-colors duration-300 hover:text-white"
+            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
           >
             LinkedIn
           </a>
         </div>
 
-        <p className="text-xs text-text-ghost">
+        <p className="text-xs text-white/40">
           &copy; {new Date().getFullYear()} Ektarva. All rights reserved.
         </p>
       </div>

@@ -14,11 +14,11 @@ export default function EventDetails() {
 
       <div className="mx-auto max-w-4xl">
         <div className="mb-3 text-center">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-light-blue">Details</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Details</p>
           <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">Event Details</h2>
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-cobalt/20 bg-cobalt/5 px-3 py-1 text-xs font-medium text-cobalt">
-            <span className="h-1.5 w-1.5 rounded-full bg-cobalt animate-pulse" />
-            Date announcement coming soon
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-white">
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            April 10, 2026
           </div>
         </div>
 
@@ -26,7 +26,7 @@ export default function EventDetails() {
           {details.map((d, i) => (
             <div key={d.label} className="glass group flex flex-col items-center rounded-2xl p-5 text-center transition-all duration-300 hover:bg-white/[0.06]" style={{ animation: `fade-up 0.6s ease-out ${0.1 * i}s both` }}>
               <span className="mb-2 text-xl">{d.icon}</span>
-              <span className="mb-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-text-muted">{d.label}</span>
+              <span className="mb-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/50">{d.label}</span>
               <span className="text-base font-bold text-white">{d.value}</span>
             </div>
           ))}
