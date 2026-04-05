@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 declare global {
   interface Window {
@@ -44,6 +48,28 @@ export default function RegistrationForm() {
   });
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const words = headingRef.current?.querySelectorAll(".word");
+      if (words) {
+        gsap.fromTo(words, { opacity: 0, y: 15 }, {
+          opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out",
+          scrollTrigger: { trigger: headingRef.current, start: "top 85%" },
+        });
+      }
+
+      gsap.fromTo(formRef.current, { opacity: 0, y: 40 }, {
+        opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
+        scrollTrigger: { trigger: formRef.current, start: "top 85%" },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const loadRazorpayScript = (): Promise<void> => {
     return new Promise((resolve) => {
@@ -150,22 +176,24 @@ export default function RegistrationForm() {
     "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/40 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
 
   return (
-    <section id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
+    <section ref={sectionRef} id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
       <div
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(ellipse 40% 50% at 50% 60%, rgba(0,74,173,0.08), transparent)" }}
       />
 
       <div className="relative z-10 mx-auto max-w-lg">
-        <div className="mb-10 text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Register</p>
-          <h2 className="mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
-            Secure Your Spot
-          </h2>
-          <p className="text-white/60">If you&apos;re serious about getting hired, this is for you.</p>
+        <div ref={headingRef} className="mb-10 text-center">
+          <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Register</p>
+          {"Secure Your Spot".split(" ").map((w, i) => (
+            <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
+              {w}{i < 2 ? "\u00A0" : ""}
+            </span>
+          ))}
+          <p className="word mt-3 text-white/60">If you&apos;re serious about getting hired, this is for you.</p>
         </div>
 
-        <div className="glass-elevated rounded-3xl p-8 md:p-10">
+        <div ref={formRef} className="glass-elevated rounded-3xl p-8 md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/80">
