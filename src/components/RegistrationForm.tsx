@@ -6,32 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-declare global {
-  interface Window {
-    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
-  }
-}
-
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  handler: (response: RazorpayResponse) => void;
-  prefill: { name: string; email: string; contact: string };
-  theme: { color: string };
-  modal?: { ondismiss?: () => void };
-}
-
-interface RazorpayInstance { open: () => void; }
-
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
+const RAZORPAY_PAYMENT_LINK = process.env.NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK || "";
 
 interface FormData {
   fullName: string;
@@ -71,21 +46,6 @@ export default function RegistrationForm() {
     return () => ctx.revert();
   }, []);
 
-  const loadRazorpayScript = (): Promise<void> => {
-    return new Promise((resolve) => {
-      if (document.getElementById("razorpay-script")) {
-        resolve();
-        return;
-      }
-      const script = document.createElement("script");
-      script.id = "razorpay-script";
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      script.onload = () => resolve();
-      document.body.appendChild(script);
-    });
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -96,52 +56,27 @@ export default function RegistrationForm() {
     setErrorMsg("");
 
     try {
-      await loadRazorpayScript();
-
-      const res = await fetch("/api/create-order", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Failed to create order");
-      const { orderId } = await res.json();
 
-      const options: RazorpayOptions = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
-        amount: 19900,
-        currency: "INR",
-        name: "Ektarva",
-        description: "Pitch to Hire — Event Registration",
-        order_id: orderId,
-        handler: async (response: RazorpayResponse) => {
-          try {
-            const verifyRes = await fetch("/api/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...form,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-            if (verifyRes.ok) setStatus("success");
-            else throw new Error("Verification failed");
-          } catch {
-            setStatus("error");
-            setErrorMsg("Payment received but verification failed. Contact support.");
-          }
-        },
-        prefill: { name: form.fullName, email: form.email, contact: form.phone },
-        theme: { color: "#0064AD" },
-        modal: { ondismiss: () => setStatus("idle") },
-      };
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Registration failed");
+      }
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch {
+      setStatus("success");
+      // Redirect to Razorpay payment link after a short delay
+      setTimeout(() => {
+        if (RAZORPAY_PAYMENT_LINK) {
+          window.open(RAZORPAY_PAYMENT_LINK, "_blank");
+        }
+      }, 1500);
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("Something went wrong. Please try again.");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   };
 
@@ -155,17 +90,31 @@ export default function RegistrationForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-white">You&apos;re In!</h3>
+            <h3 className="mb-2 text-2xl font-bold text-white">Almost There!</h3>
             <p className="mb-6 text-white/70">
-              Your spot for <strong className="text-white">Pitch to Hire</strong> is confirmed.
+              Your details are saved. Complete payment to confirm your spot at <strong className="text-white">Pitch to Hire</strong>.
             </p>
             <div className="glass rounded-xl p-5 text-left text-sm">
               <p className="text-white/70"><span className="text-white/50">Name:</span> <span className="text-white">{form.fullName}</span></p>
               <p className="text-white/70"><span className="text-white/50">Email:</span> <span className="text-white">{form.email}</span></p>
-              <p className="mt-4 text-xs text-white/50">
-                We&apos;ll share the event link and details closer to the date. Screenshot this page for your records.
+              <p className="text-white/70"><span className="text-white/50">Phone:</span> <span className="text-white">{form.phone}</span></p>
+            </div>
+            <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left text-sm">
+              <p className="font-medium text-amber-400">Important</p>
+              <p className="mt-1 text-amber-200/70">
+                Use the <strong className="text-amber-300">same email &amp; phone number</strong> while making the payment. We verify your registration against your payment details.
               </p>
             </div>
+            {RAZORPAY_PAYMENT_LINK && (
+              <a
+                href={RAZORPAY_PAYMENT_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block w-full rounded-xl bg-cobalt py-4 text-center text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01]"
+              >
+                Pay ₹199 Now
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -232,7 +181,7 @@ export default function RegistrationForm() {
               disabled={status === "processing"}
               className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {status === "processing" ? "Processing..." : "Proceed to Payment (₹199)"}
+              {status === "processing" ? "Registering..." : "Register & Pay (₹199)"}
             </button>
 
             <p className="text-center text-xs text-white/40">Secure payment powered by Razorpay</p>
