@@ -48,7 +48,7 @@ export default function Footer() {
             Contact
           </a>
           <a
-            href="https://instagram.com/ektarva"
+            href="https://www.instagram.com/ektarvaa?igsh=NmR0eTQ5dHJ6eHl6"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
