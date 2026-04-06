@@ -36,31 +36,45 @@ export async function POST(req: NextRequest) {
       const phone = payment.contact;
       const paymentId = payment.id;
 
-      // Match registration by email and update status
-      const { error } = await supabase
-        .from("registrations")
-        .update({
-          payment_status: "paid",
-          razorpay_payment_id: paymentId,
-        })
-        .eq("email", email)
-        .eq("payment_status", "pending");
+      let matched = false;
 
-      if (error) {
-        console.error("Supabase update error:", error);
-      }
-
-      // If no match by email, try matching by phone
-      if (!email && phone) {
-        const cleaned = phone.replace(/\D/g, "").slice(-10);
-        await supabase
+      // Try matching by email first
+      if (email) {
+        const { data } = await supabase
           .from("registrations")
           .update({
             payment_status: "paid",
             razorpay_payment_id: paymentId,
           })
-          .ilike("phone", `%${cleaned}`)
+          .eq("email", email)
+          .eq("payment_status", "pending")
+          .select();
+
+        if (data && data.length > 0) matched = true;
+      }
+
+      // If no email match, try matching by phone (last 10 digits)
+      if (!matched && phone) {
+        const cleaned = phone.replace(/\D/g, "").slice(-10);
+        const { data: rows } = await supabase
+          .from("registrations")
+          .select("id, phone")
           .eq("payment_status", "pending");
+
+        if (rows) {
+          const match = rows.find((r) =>
+            r.phone.replace(/\D/g, "").slice(-10) === cleaned
+          );
+          if (match) {
+            await supabase
+              .from("registrations")
+              .update({
+                payment_status: "paid",
+                razorpay_payment_id: paymentId,
+              })
+              .eq("id", match.id);
+          }
+        }
       }
     }
 
