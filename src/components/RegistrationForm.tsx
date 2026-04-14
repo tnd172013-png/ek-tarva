@@ -68,12 +68,6 @@ export default function RegistrationForm() {
       }
 
       setStatus("success");
-      // Redirect to Razorpay payment link after a short delay
-      setTimeout(() => {
-        if (RAZORPAY_PAYMENT_LINK) {
-          window.open(RAZORPAY_PAYMENT_LINK, "_blank");
-        }
-      }, 1500);
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");

@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TARGET_DATE = new Date("2026-04-10T00:00:00+05:30").getTime();
+const TARGET_DATE = new Date("2026-04-16T00:00:00+05:30").getTime();
 
 function getTimeLeft() {
   const now = Date.now();
