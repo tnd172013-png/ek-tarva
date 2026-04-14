@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+const PENDING_COOLDOWN_MS = 10 * 60 * 1000;
+
 export async function POST(req: NextRequest) {
   try {
     const { fullName, email, phone, linkedin } = await req.json();
@@ -12,10 +14,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if already registered and paid
     const { data: existing } = await supabase
       .from("registrations")
-      .select("id, payment_status")
+      .select("id, payment_status, created_at")
       .eq("email", email)
       .limit(1)
       .single();
@@ -27,9 +28,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // If there's a stale pending row, delete it and re-insert fresh
     if (existing?.payment_status === "pending") {
-      await supabase.from("registrations").delete().eq("id", existing.id);
+      const ageMs = Date.now() - new Date(existing.created_at).getTime();
+      if (ageMs < PENDING_COOLDOWN_MS) {
+        return NextResponse.json(
+          {
+            error:
+              "A registration for this email is already in progress. Please complete payment, or try again in 10 minutes.",
+          },
+          { status: 409 }
+        );
+      }
+
+      const { error: updateError } = await supabase
+        .from("registrations")
+        .update({
+          full_name: fullName,
+          phone,
+          linkedin_url: linkedin || null,
+          created_at: new Date().toISOString(),
+        })
+        .eq("id", existing.id);
+
+      if (updateError) {
+        console.error("Supabase update error:", updateError);
+        return NextResponse.json(
+          { error: "Registration failed. Please try again." },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ success: true });
     }
 
     const { error } = await supabase.from("registrations").insert({
