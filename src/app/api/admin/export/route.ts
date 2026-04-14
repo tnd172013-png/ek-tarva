@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
-  // Simple secret key auth — check query param
-  const key = req.nextUrl.searchParams.get("key");
-  if (key !== process.env.ADMIN_SECRET) {
+  const auth = req.headers.get("authorization");
+  const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+  const adminSecret = process.env.ADMIN_SECRET;
+
+  if (!adminSecret || !token || token.length !== adminSecret.length) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const filter = req.nextUrl.searchParams.get("filter"); // "paid", "pending", or "all"
+  const tokenBuf = Buffer.from(token);
+  const secretBuf = Buffer.from(adminSecret);
+  if (!crypto.timingSafeEqual(tokenBuf, secretBuf)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const filter = req.nextUrl.searchParams.get("filter");
 
   let query = supabase
     .from("registrations")
@@ -31,7 +40,6 @@ export async function GET(req: NextRequest) {
     return new NextResponse("No registrations found.", { status: 200 });
   }
 
-  // Build CSV
   const headers = ["Full Name", "Email", "Phone", "LinkedIn", "Payment Status", "Razorpay Payment ID", "Registered At"];
   const rows = data.map((r) => [
     r.full_name,
@@ -48,7 +56,6 @@ export async function GET(req: NextRequest) {
     ...rows.map((row) => row.map((cell: string) => `"${String(cell).replace(/"/g, '""')}"`).join(",")),
   ].join("\n");
 
-  // Add BOM for Excel to detect UTF-8
   const bom = "\uFEFF";
 
   return new NextResponse(bom + csv, {
