@@ -131,21 +131,21 @@ export default function CompanyForm() {
 
   if (status === "success") {
     return (
-      <section className="bg-bg-primary px-6 py-20">
+      <section className="bg-white px-6 py-20 font-sans">
         <div className="mx-auto max-w-lg">
-          <div className="glass-elevated rounded-3xl border border-emerald-500/20 p-10 text-center shadow-[0_0_60px_rgba(16,185,129,0.1)]">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-              <svg className="h-8 w-8 text-emerald-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <div className="rounded-3xl border border-cobalt/15 bg-light-blue p-10 text-center shadow-[0_10px_40px_rgba(0,74,173,0.12)]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-cobalt/10">
+              <svg className="h-8 w-8 text-cobalt" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-white">Thanks for pitching!</h3>
-            <p className="mb-6 text-white/70">
+            <h3 className="mb-2 text-2xl font-bold text-cobalt">Thanks for pitching!</h3>
+            <p className="mb-6 text-cobalt/70">
               Your company details are in. Our team will reach out with next steps for the event.
             </p>
             <button
               onClick={() => setStatus("idle")}
-              className="text-sm text-white/60 underline underline-offset-4 hover:text-white"
+              className="text-sm text-cobalt/70 underline underline-offset-4 hover:text-cobalt"
             >
               Submit another response
             </button>
@@ -156,36 +156,34 @@ export default function CompanyForm() {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white placeholder:text-white/40 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
+    "w-full rounded-xl border border-cobalt/20 bg-white px-4 py-3 text-cobalt placeholder:text-cobalt/30 outline-none transition-all duration-200 focus:border-cobalt focus:shadow-[0_0_0_3px_rgba(0,74,173,0.15)]";
 
-  const labelClass = "mb-1.5 block text-sm font-medium text-white/80";
+  const labelClass = "mb-1.5 block text-sm font-medium text-cobalt";
 
   const sectionTitle = (num: string, title: string) => (
-    <div className="mb-6 flex items-baseline gap-3 border-b border-white/10 pb-3">
-      <span className="font-mono text-xs text-white/40">{num}</span>
-      <h3 className="text-xl font-bold text-white md:text-2xl">{title}</h3>
+    <div className="mb-6 flex items-baseline gap-3 border-b border-cobalt/15 pb-3">
+      <span className="font-mono text-xs text-cobalt/60">{num}</span>
+      <h3 className="text-xl font-bold text-cobalt md:text-2xl">{title}</h3>
     </div>
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-bg-primary px-6 py-14 md:py-20">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 50% 40% at 50% 0%, rgba(0,74,173,0.1), transparent)" }}
-      />
-
+    <section ref={sectionRef} className="relative bg-white px-6 py-14 font-sans md:py-20">
       <div className="relative z-10 mx-auto max-w-3xl">
         <div className="mb-10 text-center">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/60">For Companies</p>
-          <h2 className="mb-3 text-3xl font-bold text-white md:text-5xl">
-            Pitch Your <span className="gradient-text">Openings</span>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cobalt/70">For Companies</p>
+          <h2 className="mb-5 text-3xl font-bold text-cobalt md:text-5xl">
+            Pitch Your Openings
           </h2>
-          <p className="mx-auto max-w-xl text-white/60">
-            Tell us who you&apos;re hiring. We&apos;ll line you up with the right developers at the event.
+          <p className="mx-auto mb-3 max-w-xl text-lg italic text-cobalt/90 md:text-xl">
+            &ldquo;Behind every great product is the right team.&rdquo;
+          </p>
+          <p className="mx-auto max-w-xl text-cobalt/70">
+            Let us help you find yours — start by pitching your roles.
           </p>
         </div>
 
-        <div ref={cardRef} className="glass-elevated rounded-3xl p-6 md:p-10" style={{ opacity: 0 }}>
+        <div ref={cardRef} className="rounded-3xl bg-light-blue p-6 shadow-[0_20px_60px_rgba(0,74,173,0.12)] md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-12">
 
             {/* Section 1 — Company */}
@@ -210,15 +208,15 @@ export default function CompanyForm() {
                 <p className={labelClass}>Current Team Size</p>
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
-                    <label className="mb-1 block text-xs text-white/60">Full Time</label>
+                    <label className="mb-1 block text-xs text-cobalt/70">Full Time</label>
                     <input type="number" min="0" value={form.teamFullTime} onChange={(e) => update("teamFullTime", e.target.value)} className={inputClass} placeholder="0" />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs text-white/60">Part Time / Interns</label>
+                    <label className="mb-1 block text-xs text-cobalt/70">Part Time / Interns</label>
                     <input type="number" min="0" value={form.teamPartTime} onChange={(e) => update("teamPartTime", e.target.value)} className={inputClass} placeholder="0" />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs text-white/60">Freelancing</label>
+                    <label className="mb-1 block text-xs text-cobalt/70">Freelancing</label>
                     <input type="number" min="0" value={form.teamFreelance} onChange={(e) => update("teamFreelance", e.target.value)} className={inputClass} placeholder="0" />
                   </div>
                 </div>
@@ -239,7 +237,7 @@ export default function CompanyForm() {
             {/* Section 2 — Role pitch */}
             <div>
               {sectionTitle("02", "Current Pitch for Role")}
-              <p className="mb-4 text-sm text-white/50">
+              <p className="mb-4 text-sm text-cobalt/70">
                 Fill rows only for the roles you&apos;re hiring. Leave the rest blank.
               </p>
 
@@ -247,7 +245,7 @@ export default function CompanyForm() {
                 <div className="inline-block min-w-full align-middle px-6 md:px-0">
                   <table className="min-w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs uppercase tracking-wider text-white/50">
+                      <tr className="text-left text-xs uppercase tracking-wider text-cobalt/70">
                         <th className="py-2 pr-4 font-medium">Role</th>
                         <th className="py-2 pr-3 font-medium">No. of People</th>
                         <th className="py-2 pr-3 font-medium">Package (range)</th>
@@ -256,8 +254,8 @@ export default function CompanyForm() {
                     </thead>
                     <tbody>
                       {ROLES.map((role) => (
-                        <tr key={role} className="border-t border-white/5">
-                          <td className="py-2 pr-4 font-medium text-white/90">{role}</td>
+                        <tr key={role} className="border-t border-cobalt/15">
+                          <td className="py-2 pr-4 font-medium text-cobalt">{role}</td>
                           <td className="py-2 pr-3">
                             <input type="number" min="0" value={form.roles[role].count} onChange={(e) => updateRole(role, "count", e.target.value)} className={inputClass + " !py-2 !px-3 w-24"} placeholder="0" />
                           </td>
@@ -278,7 +276,7 @@ export default function CompanyForm() {
             {/* Section 3 — Other domain */}
             <div>
               {sectionTitle("03", "Any Other Domain You're Hiring?")}
-              <label className="flex items-center gap-3 text-white/80">
+              <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireOtherDomain} onChange={(e) => update("hireOtherDomain", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring for another domain
               </label>
@@ -304,7 +302,7 @@ export default function CompanyForm() {
             {/* Section 4 — Interns */}
             <div>
               {sectionTitle("04", "Hiring Interns?")}
-              <label className="flex items-center gap-3 text-white/80">
+              <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireInterns} onChange={(e) => update("hireInterns", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring interns
               </label>
@@ -343,7 +341,7 @@ export default function CompanyForm() {
             </div>
 
             {status === "error" && (
-              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+              <div className="rounded-xl border border-red-500/40 bg-red-50 p-4 text-sm text-red-700">
                 {errorMsg}
               </div>
             )}
@@ -351,7 +349,7 @@ export default function CompanyForm() {
             <button
               type="submit"
               disabled={status === "processing"}
-              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_4px_20px_rgba(0,74,173,0.3)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_6px_30px_rgba(0,74,173,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {status === "processing" ? "Submitting..." : "Submit Pitch"}
             </button>
