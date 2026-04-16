@@ -47,11 +47,13 @@ export default function EventDetails() {
       <div className="mx-auto max-w-4xl">
         <div ref={headingRef} className="mb-3 text-center">
           <p className="word mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Details</p>
-          {"Event Details".split(" ").map((w, i) => (
-            <span key={i} className="word inline-block mb-3 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
-              {w}{i < 1 ? "\u00A0" : ""}
-            </span>
-          ))}
+          <div className="mb-3">
+            {"Event Details".split(" ").map((w, i) => (
+              <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
+                {w}{i < 1 ? "\u00A0" : ""}
+              </span>
+            ))}
+          </div>
           <div className="word mx-auto inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-white">
             <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
             April 20, 2026 · 5:30 PM IST
