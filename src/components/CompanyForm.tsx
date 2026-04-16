@@ -168,9 +168,9 @@ export default function CompanyForm() {
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-white px-6 py-14 font-sans md:py-20">
+    <section ref={sectionRef} className="relative bg-white px-6 pt-4 pb-14 font-sans md:pt-14 md:pb-20">
       <div className="relative z-10 mx-auto max-w-3xl">
-        <div className="mb-10 text-center">
+        <div className="mb-8 text-center md:mb-10">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cobalt/70">For Companies</p>
           <h2 className="mb-5 text-3xl font-bold text-cobalt md:text-5xl">
             Pitch Your Openings

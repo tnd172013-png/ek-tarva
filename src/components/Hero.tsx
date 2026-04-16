@@ -45,7 +45,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen flex-col items-center justify-start overflow-hidden bg-bg-primary px-6 pt-12 pb-10 md:pt-16"
+      className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-bg-primary px-6 pt-10 pb-12 md:min-h-screen md:pt-16 md:pb-10"
     >
       {/* Aurora gradient background */}
       <div className="pointer-events-none absolute inset-0">
@@ -71,7 +71,7 @@ export default function Hero() {
       <div className="tech-grid pointer-events-none absolute inset-0" />
 
       {/* Content */}
-      <div ref={contentRef} className="relative z-10 mt-auto mb-auto flex max-w-4xl flex-col items-center text-center">
+      <div ref={contentRef} className="relative z-10 flex max-w-4xl flex-col items-center text-center">
         <div ref={logoRef} className="mb-6" style={{ opacity: 0 }}>
           <Image
             src="/images/logo-light.png"

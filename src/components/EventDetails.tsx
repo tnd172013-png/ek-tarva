@@ -54,7 +54,7 @@ export default function EventDetails() {
           ))}
           <div className="word mx-auto inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-white">
             <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-            April 16, 2026
+            April 20, 2026 · 5:30 PM IST
           </div>
         </div>
 
