@@ -10,7 +10,7 @@ export const metadata = {
 export default function CompaniesPage() {
   return (
     <main className="relative bg-white font-sans">
-      <header className="flex items-center justify-between px-6 py-5 md:px-10 md:py-6">
+      <header className="flex items-center justify-between px-6 py-3 md:px-10 md:py-5">
         <Image
           src="/images/logo-cobalt.png"
           alt="Ektarva"
