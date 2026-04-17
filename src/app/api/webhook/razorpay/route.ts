@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
 
-const EXPECTED_AMOUNT_PAISE = 19900;
+// TEMPORARY: lowered to ₹1 for testing. REVERT TO 19900 BEFORE GOING LIVE.
+const EXPECTED_AMOUNT_PAISE = 100;
 const EXPECTED_CURRENCY = "INR";
 
 function timingSafeEqualHex(a: string, b: string): boolean {

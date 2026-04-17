@@ -65,7 +65,7 @@ export default function Countdown() {
   return (
     <section ref={sectionRef} className="relative bg-bg-primary px-6 py-14">
       <div className="mx-auto max-w-3xl text-center">
-        <p ref={labelRef} className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-white/70" style={{ opacity: 0 }}>
+        <p ref={labelRef} className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-white" style={{ opacity: 0 }}>
           Event Starts In
         </p>
         <div ref={boxesRef} className="flex items-center justify-center gap-4 md:gap-8">
