@@ -85,13 +85,13 @@ export default function RegistrationForm() {
               </svg>
             </div>
             <h3 className="mb-2 text-2xl font-bold text-white">Almost There!</h3>
-            <p className="mb-6 text-white/70">
+            <p className="mb-6 text-white/90">
               Your details are saved. Complete payment to confirm your spot at <strong className="text-white">Pitch to Hire</strong>.
             </p>
             <div className="glass rounded-xl p-5 text-left text-sm">
-              <p className="text-white/70"><span className="text-white/50">Name:</span> <span className="text-white">{form.fullName}</span></p>
-              <p className="text-white/70"><span className="text-white/50">Email:</span> <span className="text-white">{form.email}</span></p>
-              <p className="text-white/70"><span className="text-white/50">Phone:</span> <span className="text-white">{form.phone}</span></p>
+              <p className="text-white/90"><span className="text-white/90">Name:</span> <span className="text-white">{form.fullName}</span></p>
+              <p className="text-white/90"><span className="text-white/90">Email:</span> <span className="text-white">{form.email}</span></p>
+              <p className="text-white/90"><span className="text-white/90">Phone:</span> <span className="text-white">{form.phone}</span></p>
             </div>
             <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left text-sm">
               <p className="font-medium text-amber-400">Important</p>
@@ -116,7 +116,7 @@ export default function RegistrationForm() {
   }
 
   const inputClasses =
-    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/40 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
+    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/90 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
 
   return (
     <section ref={sectionRef} id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
@@ -127,40 +127,40 @@ export default function RegistrationForm() {
 
       <div className="relative z-10 mx-auto max-w-lg">
         <div ref={headingRef} className="mb-10 text-center">
-          <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Register</p>
+          <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/90">Register</p>
           {"Secure Your Spot".split(" ").map((w, i) => (
             <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
               {w}{i < 2 ? "\u00A0" : ""}
             </span>
           ))}
-          <p className="word mt-3 text-white/60">If you&apos;re serious about getting hired, this is for you.</p>
+          <p className="word mt-3 text-white/90">If you&apos;re serious about getting hired, this is for you.</p>
         </div>
 
         <div ref={formRef} className="glass-elevated rounded-3xl p-8 md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/80">
-                Full Name <span className="text-white/40">*</span>
+              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/90">
+                Full Name <span className="text-white/90">*</span>
               </label>
               <input type="text" id="fullName" name="fullName" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
             </div>
 
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/80">
-                Email <span className="text-white/40">*</span>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/90">
+                Email <span className="text-white/90">*</span>
               </label>
               <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
             </div>
 
             <div>
-              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-white/80">
-                Phone Number <span className="text-white/40">*</span>
+              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-white/90">
+                Phone Number <span className="text-white/90">*</span>
               </label>
               <input type="tel" id="phone" name="phone" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="Your phone number" />
             </div>
 
             <div>
-              <label htmlFor="linkedin" className="mb-1.5 block text-sm font-medium text-white/80">
+              <label htmlFor="linkedin" className="mb-1.5 block text-sm font-medium text-white/90">
                 LinkedIn Profile URL
               </label>
               <input type="url" id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
@@ -178,7 +178,7 @@ export default function RegistrationForm() {
               {status === "processing" ? "Registering..." : "Register & Pay (₹199)"}
             </button>
 
-            <p className="text-center text-xs text-white/40">Secure payment powered by Razorpay</p>
+            <p className="text-center text-xs text-white/90">Secure payment powered by Razorpay</p>
           </form>
         </div>
       </div>

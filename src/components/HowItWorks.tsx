@@ -46,7 +46,7 @@ export default function HowItWorks() {
     <section ref={sectionRef} className="relative bg-bg-elevated px-6 py-16 md:py-20">
       <div className="mx-auto max-w-5xl">
         <div ref={headingRef} className="mb-10 text-center">
-          <p className="word mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/70">The Process</p>
+          <p className="word mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">The Process</p>
           {"How It Works".split(" ").map((w, i) => (
             <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
               {w}{i < 2 ? "\u00A0" : ""}
@@ -66,9 +66,9 @@ export default function HowItWorks() {
                 </div>
                 <div className="glass rounded-xl px-5 py-4 flex-1 transition-all duration-300 group-hover:bg-white/[0.05]">
                   <h3 className="mb-1 text-base font-semibold text-white md:text-lg">{step.title}</h3>
-                  <p className="text-xs text-white/70 md:text-sm">{step.desc}</p>
+                  <p className="text-xs text-white/90 md:text-sm">{step.desc}</p>
                   {i === 1 && (
-                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-medium text-white/80">
+                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-medium text-white/90">
                       <span className="h-1 w-1 rounded-full bg-white/80" />
                       15 mins per company
                     </div>

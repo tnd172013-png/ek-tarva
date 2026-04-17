@@ -76,7 +76,7 @@ export default function Countdown() {
                   {unit.value !== null ? String(unit.value).padStart(2, "0") : "--"}
                 </span>
               </div>
-              <span className="mt-2 block text-[10px] uppercase tracking-[0.15em] text-white/50">
+              <span className="mt-2 block text-[10px] uppercase tracking-[0.15em] text-white/90">
                 {unit.label}
               </span>
             </div>

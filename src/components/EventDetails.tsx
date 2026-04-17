@@ -46,7 +46,7 @@ export default function EventDetails() {
 
       <div className="mx-auto max-w-4xl">
         <div ref={headingRef} className="mb-3 text-center">
-          <p className="word mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/70">Details</p>
+          <p className="word mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90">Details</p>
           <div className="mb-3">
             {"Event Details".split(" ").map((w, i) => (
               <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
@@ -64,7 +64,7 @@ export default function EventDetails() {
           {details.map((d) => (
             <div key={d.label} className="glass group flex flex-col items-center rounded-2xl p-5 text-center transition-all duration-300 hover:bg-white/[0.06]" style={{ opacity: 0 }}>
               <span className="mb-2 text-xl">{d.icon}</span>
-              <span className="mb-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/50">{d.label}</span>
+              <span className="mb-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/90">{d.label}</span>
               <span className="text-base font-bold text-white">{d.value}</span>
             </div>
           ))}
