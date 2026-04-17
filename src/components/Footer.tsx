@@ -33,17 +33,17 @@ export default function Footer() {
           alt="Ektarva"
           width={120}
           height={40}
-          className="mx-auto mb-3 h-auto w-24 opacity-50"
+          className="mx-auto mb-3 h-auto w-24"
           style={{ opacity: 0 }}
         />
-        <p className="mb-8 text-sm italic text-white/40" style={{ opacity: 0 }}>
+        <p className="mb-8 text-sm italic text-white" style={{ opacity: 0 }}>
           One Root, Many Branches
         </p>
 
         <div className="mb-8 flex items-center justify-center gap-8" style={{ opacity: 0 }}>
           <a
             href="mailto:hello@ektarva.com"
-            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
           >
             Contact
           </a>
@@ -51,7 +51,7 @@ export default function Footer() {
             href="https://www.instagram.com/ektarvaa?igsh=NmR0eTQ5dHJ6eHl6"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
           >
             Instagram
           </a>
@@ -59,13 +59,13 @@ export default function Footer() {
             href="https://linkedin.com/company/ektarva"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-white/50 transition-colors duration-300 hover:text-white"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
           >
             LinkedIn
           </a>
         </div>
 
-        <p className="text-xs text-white/40" style={{ opacity: 0 }}>
+        <p className="text-xs text-white" style={{ opacity: 0 }}>
           &copy; {new Date().getFullYear()} Ektarva. All rights reserved.
         </p>
       </div>
