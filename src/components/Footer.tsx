@@ -43,7 +43,7 @@ export default function Footer() {
         <div className="mb-8 flex items-center justify-center gap-8" style={{ opacity: 0 }}>
           <a
             href="mailto:hello@ektarva.com"
-            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/90"
           >
             Contact
           </a>
@@ -51,7 +51,7 @@ export default function Footer() {
             href="https://www.instagram.com/ektarvaa?igsh=NmR0eTQ5dHJ6eHl6"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/90"
           >
             Instagram
           </a>
@@ -59,7 +59,7 @@ export default function Footer() {
             href="https://linkedin.com/company/ektarva"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-white transition-colors duration-300 hover:text-white/70"
+            className="text-sm text-white transition-colors duration-300 hover:text-white/90"
           >
             LinkedIn
           </a>

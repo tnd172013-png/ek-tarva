@@ -85,7 +85,7 @@ export default function Hero() {
 
         <div
           ref={badgeRef}
-          className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/80"
+          className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/90"
           style={{ opacity: 0 }}
         >
           <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
