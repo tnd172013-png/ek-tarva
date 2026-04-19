@@ -1,4 +1,3 @@
-import Image from "next/image";
 import YuvaForm from "@/components/YuvaForm";
 
 export const metadata = {
@@ -10,20 +9,6 @@ export const metadata = {
 export default function YuvaPage() {
   return (
     <main className="relative bg-white font-sans">
-      <header className="flex items-center justify-between px-6 py-3 md:px-10 md:py-5">
-        <Image
-          src="/images/logo-cobalt.png"
-          alt="Ektarva"
-          width={160}
-          height={80}
-          priority
-          className="h-auto w-28 md:w-36"
-        />
-        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cobalt md:text-sm">
-          Pitch to Hire <span className="font-medium text-cobalt/60">— presented by Ektarva</span>
-        </p>
-      </header>
-
       <YuvaForm />
 
       <footer className="border-t border-cobalt/15 bg-white px-6 py-10">

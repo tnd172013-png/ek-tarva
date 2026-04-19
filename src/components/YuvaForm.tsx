@@ -196,7 +196,7 @@ export default function YuvaForm() {
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-white px-6 pt-4 pb-14 font-sans md:pt-14 md:pb-20">
+    <section ref={sectionRef} className="relative bg-white px-6 pt-10 pb-14 font-sans md:pt-16 md:pb-20">
       <div className="relative z-10 mx-auto max-w-3xl">
         <div className="mb-8 text-center md:mb-10">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cobalt/70">
