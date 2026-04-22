@@ -17,11 +17,7 @@ export async function POST(req: NextRequest) {
     const upstream = await fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...body,
-        formType: "yuva",
-        submittedAt: new Date().toISOString(),
-      }),
+      body: JSON.stringify({ ...body, submittedAt: new Date().toISOString() }),
     });
 
     if (!upstream.ok) {
