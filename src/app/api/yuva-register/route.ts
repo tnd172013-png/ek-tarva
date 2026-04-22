@@ -8,9 +8,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const scriptUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    const scriptUrl =
+      process.env.YUVA_SHEETS_WEBHOOK_URL || process.env.GOOGLE_SHEETS_WEBHOOK_URL;
     if (!scriptUrl) {
-      console.error("GOOGLE_SHEETS_WEBHOOK_URL is not set");
+      console.error("YUVA_SHEETS_WEBHOOK_URL (or GOOGLE_SHEETS_WEBHOOK_URL) is not set");
       return NextResponse.json({ error: "Server is not configured" }, { status: 500 });
     }
 
