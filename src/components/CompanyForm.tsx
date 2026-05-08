@@ -21,6 +21,10 @@ const ROLES = [
 
 type RoleRow = { count: string; package: string; skills: string };
 
+type OtherDomain = { name: string; count: string; package: string };
+
+const emptyOtherDomain: OtherDomain = { name: "", count: "", package: "" };
+
 type FormData = {
   companyName: string;
   contactName: string;
@@ -32,9 +36,7 @@ type FormData = {
   email: string;
   roles: Record<string, RoleRow>;
   hireOtherDomain: boolean;
-  otherDomainName: string;
-  otherDomainCount: string;
-  otherDomainPackage: string;
+  otherDomains: OtherDomain[];
   hireInterns: boolean;
   internDomain: string;
   internCount: string;
@@ -58,9 +60,7 @@ const initialForm: FormData = {
   email: "",
   roles: Object.fromEntries(ROLES.map((r) => [r, { ...emptyRole }])),
   hireOtherDomain: false,
-  otherDomainName: "",
-  otherDomainCount: "",
-  otherDomainPackage: "",
+  otherDomains: [{ ...emptyOtherDomain }],
   hireInterns: false,
   internDomain: "",
   internCount: "",
@@ -103,16 +103,46 @@ export default function CompanyForm() {
       roles: { ...prev.roles, [role]: { ...prev.roles[role], [field]: value } },
     }));
 
+  const updateOtherDomain = (idx: number, field: keyof OtherDomain, value: string) =>
+    setForm((prev) => ({
+      ...prev,
+      otherDomains: prev.otherDomains.map((d, i) => (i === idx ? { ...d, [field]: value } : d)),
+    }));
+
+  const addOtherDomain = () =>
+    setForm((prev) => ({ ...prev, otherDomains: [...prev.otherDomains, { ...emptyOtherDomain }] }));
+
+  const removeOtherDomain = (idx: number) =>
+    setForm((prev) => ({
+      ...prev,
+      otherDomains: prev.otherDomains.length === 1
+        ? [{ ...emptyOtherDomain }]
+        : prev.otherDomains.filter((_, i) => i !== idx),
+    }));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("processing");
     setErrorMsg("");
 
     try {
+      const filledOtherDomains = form.hireOtherDomain
+        ? form.otherDomains.filter((d) => d.name || d.count || d.package)
+        : [];
+      const join = (vals: string[]) => vals.filter(Boolean).join(" | ");
+
+      const payload = {
+        ...form,
+        otherDomains: filledOtherDomains,
+        otherDomainName: join(filledOtherDomains.map((d) => d.name)),
+        otherDomainCount: join(filledOtherDomains.map((d) => d.count)),
+        otherDomainPackage: join(filledOtherDomains.map((d) => d.package)),
+      };
+
       const res = await fetch("/api/company-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -282,19 +312,63 @@ export default function CompanyForm() {
               </label>
 
               {form.hireOtherDomain && (
-                <div className="mt-5 grid gap-5 md:grid-cols-3">
-                  <div>
-                    <label className={labelClass}>Domain</label>
-                    <input value={form.otherDomainName} onChange={(e) => update("otherDomainName", e.target.value)} className={inputClass} placeholder="e.g. Product Management" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>No. of Hiring</label>
-                    <input type="number" min="0" value={form.otherDomainCount} onChange={(e) => update("otherDomainCount", e.target.value)} className={inputClass} placeholder="0" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Package (range)</label>
-                    <input value={form.otherDomainPackage} onChange={(e) => update("otherDomainPackage", e.target.value)} className={inputClass} placeholder="e.g. 8-12 LPA" />
-                  </div>
+                <div className="mt-5 space-y-5">
+                  {form.otherDomains.map((d, idx) => (
+                    <div key={idx} className="rounded-2xl border border-cobalt/15 bg-white/60 p-4 md:p-5">
+                      <div className="mb-3 flex items-center justify-between">
+                        <span className="text-xs font-semibold uppercase tracking-[0.15em] text-cobalt/70">
+                          Domain {idx + 1}
+                        </span>
+                        {(form.otherDomains.length > 1 || d.name || d.count || d.package) && (
+                          <button
+                            type="button"
+                            onClick={() => removeOtherDomain(idx)}
+                            className="text-xs font-medium text-cobalt/60 hover:text-cobalt"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid gap-5 md:grid-cols-3">
+                        <div>
+                          <label className={labelClass}>Domain</label>
+                          <input
+                            value={d.name}
+                            onChange={(e) => updateOtherDomain(idx, "name", e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g. Product Management"
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>No. of Hiring</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={d.count}
+                            onChange={(e) => updateOtherDomain(idx, "count", e.target.value)}
+                            className={inputClass}
+                            placeholder="0"
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Package (range)</label>
+                          <input
+                            value={d.package}
+                            onChange={(e) => updateOtherDomain(idx, "package", e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g. 8-12 LPA"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addOtherDomain}
+                    className="rounded-xl border border-cobalt/30 bg-white px-4 py-2 text-sm font-medium text-cobalt hover:border-cobalt/60"
+                  >
+                    + Add another domain
+                  </button>
                 </div>
               )}
             </div>
