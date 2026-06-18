@@ -5,7 +5,7 @@ const PENDING_COOLDOWN_MS = 10 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
   try {
-    const { fullName, email, phone, linkedin } = await req.json();
+    const { fullName, email, phone, linkedin, rolePreference } = await req.json();
 
     if (!fullName || !email || !phone) {
       return NextResponse.json(
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
           full_name: fullName,
           phone,
           linkedin_url: linkedin || null,
+          role_preference: rolePreference || null,
           created_at: new Date().toISOString(),
         })
         .eq("id", existing.id);
@@ -66,6 +67,7 @@ export async function POST(req: NextRequest) {
       email,
       phone,
       linkedin_url: linkedin || null,
+      role_preference: rolePreference || null,
       payment_status: "pending",
     });
 

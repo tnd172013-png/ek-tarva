@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { formatEventDate } from "@/lib/events";
+import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,19 +19,6 @@ type EventOption = {
   slots: SlotInfo[];
   available_count: number;
 };
-
-const ROLES = [
-  "Frontend Developer",
-  "Business Development Manager",
-  "Full Stack Developer",
-  "Graphic Designer",
-  "Cyber Security Engineer",
-  "Video Editor",
-  "Data Analyst",
-  "Social Media Manager",
-  "AI Engineer",
-  "Founder's Office",
-];
 
 type RoleRow = { count: string; package: string; skills: string };
 
@@ -265,9 +253,57 @@ export default function CompanyForm() {
         <div ref={cardRef} className="rounded-3xl bg-light-blue p-6 shadow-[0_20px_60px_rgba(0,74,173,0.12)] md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-12">
 
-            {/* Section 1 — Slot */}
+            {/* Section 1 — Company */}
             <div>
-              {sectionTitle("01", "Pick Your Slot")}
+              {sectionTitle("01", "Company Details")}
+              <div className="grid gap-5 md:grid-cols-2">
+                <div>
+                  <label className={labelClass}>Company Name *</label>
+                  <input required value={form.companyName} onChange={(e) => update("companyName", e.target.value)} className={inputClass} placeholder="Acme Inc." />
+                </div>
+                <div>
+                  <label className={labelClass}>Founder / HR / Point of Contact *</label>
+                  <input required value={form.contactName} onChange={(e) => update("contactName", e.target.value)} className={inputClass} placeholder="Full name" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Location *</label>
+                  <input required value={form.location} onChange={(e) => update("location", e.target.value)} className={inputClass} placeholder="e.g. Pune, Mumbai" />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <p className={labelClass}>Current Team Size</p>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <label className="mb-1 block text-xs text-cobalt/70">Full Time</label>
+                    <input type="number" min="0" value={form.teamFullTime} onChange={(e) => update("teamFullTime", e.target.value)} className={inputClass} placeholder="0" />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-cobalt/70">Part Time / Interns</label>
+                    <input type="number" min="0" value={form.teamPartTime} onChange={(e) => update("teamPartTime", e.target.value)} className={inputClass} placeholder="0" />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-cobalt/70">Freelancing</label>
+                    <input type="number" min="0" value={form.teamFreelance} onChange={(e) => update("teamFreelance", e.target.value)} className={inputClass} placeholder="0" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+                <div>
+                  <label className={labelClass}>Mobile Number *</label>
+                  <input required type="tel" value={form.mobile} onChange={(e) => update("mobile", e.target.value)} className={inputClass} placeholder="+91 ..." />
+                </div>
+                <div>
+                  <label className={labelClass}>Email ID *</label>
+                  <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} placeholder="contact@company.com" />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2 — Slot */}
+            <div>
+              {sectionTitle("02", "Pick Your Slot")}
 
               {events === null && (
                 <p className="text-sm text-cobalt/60">Loading available slots…</p>
@@ -351,54 +387,6 @@ export default function CompanyForm() {
                   )}
                 </>
               )}
-            </div>
-
-            {/* Section 2 — Company */}
-            <div>
-              {sectionTitle("02", "Company Details")}
-              <div className="grid gap-5 md:grid-cols-2">
-                <div>
-                  <label className={labelClass}>Company Name *</label>
-                  <input required value={form.companyName} onChange={(e) => update("companyName", e.target.value)} className={inputClass} placeholder="Acme Inc." />
-                </div>
-                <div>
-                  <label className={labelClass}>Founder / HR / Point of Contact *</label>
-                  <input required value={form.contactName} onChange={(e) => update("contactName", e.target.value)} className={inputClass} placeholder="Full name" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className={labelClass}>Location *</label>
-                  <input required value={form.location} onChange={(e) => update("location", e.target.value)} className={inputClass} placeholder="e.g. Pune, Mumbai" />
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <p className={labelClass}>Current Team Size</p>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div>
-                    <label className="mb-1 block text-xs text-cobalt/70">Full Time</label>
-                    <input type="number" min="0" value={form.teamFullTime} onChange={(e) => update("teamFullTime", e.target.value)} className={inputClass} placeholder="0" />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-xs text-cobalt/70">Part Time / Interns</label>
-                    <input type="number" min="0" value={form.teamPartTime} onChange={(e) => update("teamPartTime", e.target.value)} className={inputClass} placeholder="0" />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-xs text-cobalt/70">Freelancing</label>
-                    <input type="number" min="0" value={form.teamFreelance} onChange={(e) => update("teamFreelance", e.target.value)} className={inputClass} placeholder="0" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
-                <div>
-                  <label className={labelClass}>Mobile Number *</label>
-                  <input required type="tel" value={form.mobile} onChange={(e) => update("mobile", e.target.value)} className={inputClass} placeholder="+91 ..." />
-                </div>
-                <div>
-                  <label className={labelClass}>Email ID *</label>
-                  <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} placeholder="contact@company.com" />
-                </div>
-              </div>
             </div>
 
             {/* Section 3 — Role pitch */}
