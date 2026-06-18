@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -175,26 +174,7 @@ export default function RegistrationForm() {
               <label htmlFor="rolePreference" className="mb-1.5 block text-sm font-medium text-white/90">
                 Role Preference <span className="text-white/90">*</span>
               </label>
-              <select
-                id="rolePreference"
-                name="rolePreference"
-                required
-                value={form.rolePreference}
-                onChange={handleChange}
-                className={`${inputClasses} ${form.rolePreference ? "" : "text-white/50"}`}
-              >
-                <option value="" disabled className="text-bg-primary">
-                  Select the role you want to be hired for
-                </option>
-                {ROLES.map((role) => (
-                  <option key={role} value={role} className="text-bg-primary">
-                    {role}
-                  </option>
-                ))}
-                <option value="Other" className="text-bg-primary">
-                  Other
-                </option>
-              </select>
+              <input type="text" id="rolePreference" name="rolePreference" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="The role you want to be hired for" />
             </div>
 
             {status === "error" && (
