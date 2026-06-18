@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 type Filter = "paid" | "pending" | "all";
 type Status = "idle" | "downloading" | "error";
@@ -75,9 +76,12 @@ export default function AdminPage() {
           priority
           className="h-auto w-24 opacity-80"
         />
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/70">
-          Admin
-        </p>
+        <div className="flex items-center gap-4 text-xs font-medium uppercase tracking-[0.15em] text-white/70">
+          <span className="text-white">Registrations</span>
+          <Link href="/admin/events" className="hover:text-white">
+            Events
+          </Link>
+        </div>
       </header>
 
       <section className="relative px-6 py-14">

@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
+import { isAdmin } from "@/lib/admin";
 
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
-  const adminSecret = process.env.ADMIN_SECRET;
-
-  if (!adminSecret || !token || token.length !== adminSecret.length) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const tokenBuf = Buffer.from(token);
-  const secretBuf = Buffer.from(adminSecret);
-  if (!crypto.timingSafeEqual(tokenBuf, secretBuf)) {
+  if (!isAdmin(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
