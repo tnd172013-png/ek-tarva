@@ -45,6 +45,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
     "Location",
     "Mobile",
     "Email",
+    "Total Hires",
     "Team (FT/PT/Freelance)",
     "Roles Hiring",
     "Other Domains",
@@ -52,6 +53,11 @@ export async function GET(req: NextRequest, ctx: Ctx) {
     "Notes",
     "Booked At",
   ];
+
+  const num = (v: unknown) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  };
 
   const rows = bookings.map((b) => {
     const roles = (b.roles ?? {}) as Record<string, RoleRow>;
@@ -84,6 +90,12 @@ export async function GET(req: NextRequest, ctx: Ctx) {
           .join(", ")
       : "";
 
+    // Total people this company wants to hire across roles, other domains, and interns.
+    const totalHires =
+      Object.values(roles).reduce((sum, r) => sum + num(r?.count), 0) +
+      (b.hire_other_domain ? others.reduce((sum, d) => sum + num(d?.count), 0) : 0) +
+      (b.hire_interns ? num(b.intern_count) : 0);
+
     return [
       b.slot_index + 1,
       b.slot_start ?? "",
@@ -93,6 +105,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
       b.location ?? "",
       b.mobile,
       b.email,
+      totalHires,
       [b.team_full_time, b.team_part_time, b.team_freelance].map((v) => v || "0").join(" / "),
       rolesText,
       othersText,

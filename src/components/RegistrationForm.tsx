@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,13 +14,14 @@ interface FormData {
   email: string;
   phone: string;
   linkedin: string;
+  rolePreference: string;
 }
 
 type FormStatus = "idle" | "processing" | "success" | "error";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState<FormData>({
-    fullName: "", email: "", phone: "", linkedin: "",
+    fullName: "", email: "", phone: "", linkedin: "", rolePreference: "",
   });
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -92,6 +94,9 @@ export default function RegistrationForm() {
               <p className="text-white/90"><span className="text-white/90">Name:</span> <span className="text-white">{form.fullName}</span></p>
               <p className="text-white/90"><span className="text-white/90">Email:</span> <span className="text-white">{form.email}</span></p>
               <p className="text-white/90"><span className="text-white/90">Phone:</span> <span className="text-white">{form.phone}</span></p>
+              {form.rolePreference && (
+                <p className="text-white/90"><span className="text-white/90">Role:</span> <span className="text-white">{form.rolePreference}</span></p>
+              )}
             </div>
             <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left text-sm">
               <p className="font-medium text-amber-400">Important</p>
@@ -164,6 +169,32 @@ export default function RegistrationForm() {
                 LinkedIn Profile URL
               </label>
               <input type="url" id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
+            </div>
+
+            <div>
+              <label htmlFor="rolePreference" className="mb-1.5 block text-sm font-medium text-white/90">
+                Role Preference <span className="text-white/90">*</span>
+              </label>
+              <select
+                id="rolePreference"
+                name="rolePreference"
+                required
+                value={form.rolePreference}
+                onChange={handleChange}
+                className={`${inputClasses} ${form.rolePreference ? "" : "text-white/50"}`}
+              >
+                <option value="" disabled className="text-bg-primary">
+                  Select the role you want to be hired for
+                </option>
+                {ROLES.map((role) => (
+                  <option key={role} value={role} className="text-bg-primary">
+                    {role}
+                  </option>
+                ))}
+                <option value="Other" className="text-bg-primary">
+                  Other
+                </option>
+              </select>
             </div>
 
             {status === "error" && (
