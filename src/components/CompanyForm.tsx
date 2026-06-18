@@ -3,8 +3,21 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { formatEventDate } from "@/lib/events";
 
 gsap.registerPlugin(ScrollTrigger);
+
+type SlotInfo = { index: number; start: string; end: string; available: boolean };
+type EventOption = {
+  id: string;
+  event_date: string;
+  weekday: string;
+  start_time: string;
+  end_time: string;
+  slot_duration_min: number;
+  slots: SlotInfo[];
+  available_count: number;
+};
 
 const ROLES = [
   "Frontend Developer",
@@ -73,8 +86,27 @@ export default function CompanyForm() {
   const [form, setForm] = useState<FormData>(initialForm);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [events, setEvents] = useState<EventOption[] | null>(null);
+  const [selectedDayId, setSelectedDayId] = useState<string>("");
+  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const loadEvents = async () => {
+    try {
+      const res = await fetch("/api/events");
+      const data = await res.json();
+      setEvents(data.events ?? []);
+    } catch {
+      setEvents([]);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const selectedDay = events?.find((e) => e.id === selectedDayId) ?? null;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -122,6 +154,14 @@ export default function CompanyForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!selectedDayId || selectedSlot === null) {
+      setStatus("error");
+      setErrorMsg("Please pick an event day and a time slot first.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     setStatus("processing");
     setErrorMsg("");
 
@@ -133,6 +173,8 @@ export default function CompanyForm() {
 
       const payload = {
         ...form,
+        eventDayId: selectedDayId,
+        slotIndex: selectedSlot,
         otherDomains: filledOtherDomains,
         otherDomainName: join(filledOtherDomains.map((d) => d.name)),
         otherDomainCount: join(filledOtherDomains.map((d) => d.count)),
@@ -147,11 +189,18 @@ export default function CompanyForm() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        // Slot was taken / day closed — refresh availability so the grid updates.
+        if (res.status === 409) {
+          setSelectedSlot(null);
+          await loadEvents();
+        }
         throw new Error(data.error || "Submission failed");
       }
 
       setStatus("success");
       setForm(initialForm);
+      setSelectedSlot(null);
+      loadEvents();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setStatus("error");
@@ -216,9 +265,97 @@ export default function CompanyForm() {
         <div ref={cardRef} className="rounded-3xl bg-light-blue p-6 shadow-[0_20px_60px_rgba(0,74,173,0.12)] md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-12">
 
-            {/* Section 1 — Company */}
+            {/* Section 1 — Slot */}
             <div>
-              {sectionTitle("01", "Company Details")}
+              {sectionTitle("01", "Pick Your Slot")}
+
+              {events === null && (
+                <p className="text-sm text-cobalt/60">Loading available slots…</p>
+              )}
+
+              {events !== null && events.length === 0 && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
+                  No event days are open for booking right now. Please check back soon.
+                </div>
+              )}
+
+              {events !== null && events.length > 0 && (
+                <>
+                  <p className="mb-3 text-sm text-cobalt/70">Choose a day:</p>
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {events.map((ev) => {
+                      const selected = ev.id === selectedDayId;
+                      return (
+                        <button
+                          key={ev.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedDayId(ev.id);
+                            setSelectedSlot(null);
+                          }}
+                          className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                            selected
+                              ? "border-cobalt bg-cobalt text-white"
+                              : "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
+                          }`}
+                        >
+                          <span className="block font-semibold">
+                            {formatEventDate(ev.event_date)}
+                          </span>
+                          <span
+                            className={`block text-xs ${
+                              selected ? "text-white/80" : "text-cobalt/60"
+                            }`}
+                          >
+                            {ev.start_time}–{ev.end_time} · {ev.available_count} open
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedDay && (
+                    <>
+                      <p className="mb-3 text-sm text-cobalt/70">
+                        Choose a {selectedDay.slot_duration_min}-minute slot:
+                      </p>
+                      {selectedDay.available_count === 0 ? (
+                        <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
+                          This day is fully booked. Please pick another day.
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                          {selectedDay.slots.map((s) => {
+                            const selected = selectedSlot === s.index;
+                            return (
+                              <button
+                                key={s.index}
+                                type="button"
+                                disabled={!s.available}
+                                onClick={() => setSelectedSlot(s.index)}
+                                className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                                  selected
+                                    ? "border-cobalt bg-cobalt text-white"
+                                    : s.available
+                                      ? "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
+                                      : "cursor-not-allowed border-cobalt/10 bg-cobalt/5 text-cobalt/30 line-through"
+                                }`}
+                              >
+                                {s.start}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Section 2 — Company */}
+            <div>
+              {sectionTitle("02", "Company Details")}
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label className={labelClass}>Company Name *</label>
@@ -264,9 +401,9 @@ export default function CompanyForm() {
               </div>
             </div>
 
-            {/* Section 2 — Role pitch */}
+            {/* Section 3 — Role pitch */}
             <div>
-              {sectionTitle("02", "Current Pitch for Role")}
+              {sectionTitle("03", "Current Pitch for Role")}
               <p className="mb-4 text-sm text-cobalt/70">
                 Fill rows only for the roles you&apos;re hiring. Leave the rest blank.
               </p>
@@ -303,9 +440,9 @@ export default function CompanyForm() {
               </div>
             </div>
 
-            {/* Section 3 — Other domain */}
+            {/* Section 4 — Other domain */}
             <div>
-              {sectionTitle("03", "Any Other Domain You're Hiring?")}
+              {sectionTitle("04", "Any Other Domain You're Hiring?")}
               <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireOtherDomain} onChange={(e) => update("hireOtherDomain", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring for another domain
@@ -373,9 +510,9 @@ export default function CompanyForm() {
               )}
             </div>
 
-            {/* Section 4 — Interns */}
+            {/* Section 5 — Interns */}
             <div>
-              {sectionTitle("04", "Hiring Interns?")}
+              {sectionTitle("05", "Hiring Interns?")}
               <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireInterns} onChange={(e) => update("hireInterns", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring interns
@@ -403,9 +540,9 @@ export default function CompanyForm() {
               )}
             </div>
 
-            {/* Section 5 — Notes */}
+            {/* Section 6 — Notes */}
             <div>
-              {sectionTitle("05", "Observations on Previous Hiring")}
+              {sectionTitle("06", "Observations on Previous Hiring")}
               <textarea
                 value={form.notes}
                 onChange={(e) => update("notes", e.target.value)}
@@ -420,12 +557,27 @@ export default function CompanyForm() {
               </div>
             )}
 
+            {selectedSlot !== null && selectedDay && (
+              <p className="-mb-6 text-center text-sm text-cobalt/70">
+                Booking the{" "}
+                <span className="font-semibold text-cobalt">
+                  {selectedDay.slots.find((s) => s.index === selectedSlot)?.start}–
+                  {selectedDay.slots.find((s) => s.index === selectedSlot)?.end}
+                </span>{" "}
+                slot on {formatEventDate(selectedDay.event_date)}.
+              </p>
+            )}
+
             <button
               type="submit"
-              disabled={status === "processing"}
+              disabled={status === "processing" || selectedSlot === null}
               className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_4px_20px_rgba(0,74,173,0.3)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_6px_30px_rgba(0,74,173,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {status === "processing" ? "Submitting..." : "Submit Pitch"}
+              {status === "processing"
+                ? "Submitting..."
+                : selectedSlot === null
+                  ? "Pick a slot to continue"
+                  : "Submit Pitch"}
             </button>
           </form>
         </div>
