@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { formatEventDate, isFridayOrSaturday, slotCount } from "@/lib/events";
+import { formatEventDate, formatTime12, isFridayOrSaturday, slotCount } from "@/lib/events";
 
 type EventDay = {
   id: string;
@@ -316,7 +316,7 @@ export default function AdminEventsPage() {
                         {formatEventDate(ev.event_date)}
                       </p>
                       <p className="text-sm text-white/60">
-                        {ev.start_time}–{ev.end_time} · {ev.total_slots} slots ·{" "}
+                        {formatTime12(ev.start_time)}–{formatTime12(ev.end_time)} (IST) · {ev.total_slots} slots ·{" "}
                         {ev.slot_duration_min} min each
                       </p>
                       <p className="mt-1 text-xs text-white/50">
