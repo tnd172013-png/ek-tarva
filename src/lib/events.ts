@@ -38,6 +38,14 @@ function fromMinutes(mins: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
+// "17:30" -> "5:30 PM". Display only; stored/derived values stay 24-hour.
+export function formatTime12(time: string): string {
+  const [h, m] = hhmm(time).split(":").map(Number);
+  const period = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${period}`;
+}
+
 // Derive the list of slots that fit inside [startTime, endTime).
 // A trailing gap smaller than one full slot is dropped.
 export function generateSlots(

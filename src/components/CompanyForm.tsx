@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { formatEventDate } from "@/lib/events";
+import { formatEventDate, formatTime12 } from "@/lib/events";
 import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -301,97 +301,9 @@ export default function CompanyForm() {
               </div>
             </div>
 
-            {/* Section 2 — Slot */}
+            {/* Section 2 — Role pitch */}
             <div>
-              {sectionTitle("02", "Pick Your Slot")}
-
-              {events === null && (
-                <p className="text-sm text-cobalt/60">Loading available slots…</p>
-              )}
-
-              {events !== null && events.length === 0 && (
-                <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
-                  No event days are open for booking right now. Please check back soon.
-                </div>
-              )}
-
-              {events !== null && events.length > 0 && (
-                <>
-                  <p className="mb-3 text-sm text-cobalt/70">Choose a day:</p>
-                  <div className="mb-6 flex flex-wrap gap-2">
-                    {events.map((ev) => {
-                      const selected = ev.id === selectedDayId;
-                      return (
-                        <button
-                          key={ev.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedDayId(ev.id);
-                            setSelectedSlot(null);
-                          }}
-                          className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
-                            selected
-                              ? "border-cobalt bg-cobalt text-white"
-                              : "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
-                          }`}
-                        >
-                          <span className="block font-semibold">
-                            {formatEventDate(ev.event_date)}
-                          </span>
-                          <span
-                            className={`block text-xs ${
-                              selected ? "text-white/80" : "text-cobalt/60"
-                            }`}
-                          >
-                            {ev.start_time}–{ev.end_time} · {ev.available_count} open
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {selectedDay && (
-                    <>
-                      <p className="mb-3 text-sm text-cobalt/70">
-                        Choose a {selectedDay.slot_duration_min}-minute slot:
-                      </p>
-                      {selectedDay.available_count === 0 ? (
-                        <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
-                          This day is fully booked. Please pick another day.
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                          {selectedDay.slots.map((s) => {
-                            const selected = selectedSlot === s.index;
-                            return (
-                              <button
-                                key={s.index}
-                                type="button"
-                                disabled={!s.available}
-                                onClick={() => setSelectedSlot(s.index)}
-                                className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                                  selected
-                                    ? "border-cobalt bg-cobalt text-white"
-                                    : s.available
-                                      ? "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
-                                      : "cursor-not-allowed border-cobalt/10 bg-cobalt/5 text-cobalt/30 line-through"
-                                }`}
-                              >
-                                {s.start}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Section 3 — Role pitch */}
-            <div>
-              {sectionTitle("03", "Current Pitch for Role")}
+              {sectionTitle("02", "Current Pitch for Role")}
               <p className="mb-4 text-sm text-cobalt/70">
                 Fill rows only for the roles you&apos;re hiring. Leave the rest blank.
               </p>
@@ -428,9 +340,9 @@ export default function CompanyForm() {
               </div>
             </div>
 
-            {/* Section 4 — Other domain */}
+            {/* Section 3 — Other domain */}
             <div>
-              {sectionTitle("04", "Any Other Domain You're Hiring?")}
+              {sectionTitle("03", "Any Other Domain You're Hiring?")}
               <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireOtherDomain} onChange={(e) => update("hireOtherDomain", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring for another domain
@@ -498,9 +410,9 @@ export default function CompanyForm() {
               )}
             </div>
 
-            {/* Section 5 — Interns */}
+            {/* Section 4 — Interns */}
             <div>
-              {sectionTitle("05", "Hiring Interns?")}
+              {sectionTitle("04", "Hiring Interns?")}
               <label className="flex items-center gap-3 text-cobalt">
                 <input type="checkbox" checked={form.hireInterns} onChange={(e) => update("hireInterns", e.target.checked)} className="h-4 w-4 accent-cobalt" />
                 Yes, we&apos;re hiring interns
@@ -528,15 +440,105 @@ export default function CompanyForm() {
               )}
             </div>
 
-            {/* Section 6 — Notes */}
+            {/* Section 5 — Notes */}
             <div>
-              {sectionTitle("06", "Observations on Previous Hiring")}
+              {sectionTitle("05", "Observations on Previous Hiring")}
               <textarea
                 value={form.notes}
                 onChange={(e) => update("notes", e.target.value)}
                 className={inputClass + " min-h-32 resize-y"}
                 placeholder="Anything you've learned, pain points, or what you're looking for this time around..."
               />
+            </div>
+
+            {/* Section 6 — Slot */}
+            <div>
+              {sectionTitle("06", "Pick Your Slot")}
+
+              {events === null && (
+                <p className="text-sm text-cobalt/60">Loading available slots…</p>
+              )}
+
+              {events !== null && events.length === 0 && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
+                  No event days are open for booking right now. Please check back soon.
+                </div>
+              )}
+
+              {events !== null && events.length > 0 && (
+                <>
+                  <p className="mb-3 text-sm text-cobalt/70">
+                    Choose a day <span className="text-cobalt/50">(all times in IST)</span>:
+                  </p>
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {events.map((ev) => {
+                      const selected = ev.id === selectedDayId;
+                      return (
+                        <button
+                          key={ev.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedDayId(ev.id);
+                            setSelectedSlot(null);
+                          }}
+                          className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                            selected
+                              ? "border-cobalt bg-cobalt text-white"
+                              : "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
+                          }`}
+                        >
+                          <span className="block font-semibold">
+                            {formatEventDate(ev.event_date)}
+                          </span>
+                          <span
+                            className={`block text-xs ${
+                              selected ? "text-white/80" : "text-cobalt/60"
+                            }`}
+                          >
+                            {formatTime12(ev.start_time)}–{formatTime12(ev.end_time)} · {ev.available_count} open
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedDay && (
+                    <>
+                      <p className="mb-3 text-sm text-cobalt/70">
+                        Choose a {selectedDay.slot_duration_min}-minute slot (IST):
+                      </p>
+                      {selectedDay.available_count === 0 ? (
+                        <div className="rounded-xl border border-amber-500/30 bg-amber-50 p-4 text-sm text-amber-800">
+                          This day is fully booked. Please pick another day.
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                          {selectedDay.slots.map((s) => {
+                            const selected = selectedSlot === s.index;
+                            return (
+                              <button
+                                key={s.index}
+                                type="button"
+                                disabled={!s.available}
+                                onClick={() => setSelectedSlot(s.index)}
+                                className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                                  selected
+                                    ? "border-cobalt bg-cobalt text-white"
+                                    : s.available
+                                      ? "border-cobalt/20 bg-white text-cobalt hover:border-cobalt/50"
+                                      : "cursor-not-allowed border-cobalt/10 bg-cobalt/5 text-cobalt/30 line-through"
+                                }`}
+                              >
+                                {formatTime12(s.start)}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
             </div>
 
             {status === "error" && (
@@ -549,10 +551,10 @@ export default function CompanyForm() {
               <p className="-mb-6 text-center text-sm text-cobalt/70">
                 Booking the{" "}
                 <span className="font-semibold text-cobalt">
-                  {selectedDay.slots.find((s) => s.index === selectedSlot)?.start}–
-                  {selectedDay.slots.find((s) => s.index === selectedSlot)?.end}
+                  {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.start ?? "")}–
+                  {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.end ?? "")}
                 </span>{" "}
-                slot on {formatEventDate(selectedDay.event_date)}.
+                slot on {formatEventDate(selectedDay.event_date)} (IST).
               </p>
             )}
 
