@@ -548,7 +548,7 @@ export default function CompanyForm() {
             )}
 
             {selectedSlot !== null && selectedDay && (
-              <p className="-mb-6 text-center text-sm text-cobalt/70">
+              <p className="text-center text-sm text-cobalt/70">
                 Booking the{" "}
                 <span className="font-semibold text-cobalt">
                   {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.start ?? "")}–
