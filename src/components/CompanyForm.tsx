@@ -547,28 +547,30 @@ export default function CompanyForm() {
               </div>
             )}
 
-            {selectedSlot !== null && selectedDay && (
-              <p className="text-center text-sm text-cobalt/70">
-                Booking the{" "}
-                <span className="font-semibold text-cobalt">
-                  {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.start ?? "")}–
-                  {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.end ?? "")}
-                </span>{" "}
-                slot on {formatEventDate(selectedDay.event_date)} (IST).
-              </p>
-            )}
+            <div className="space-y-3">
+              {selectedSlot !== null && selectedDay && (
+                <p className="text-center text-sm text-cobalt/70">
+                  Booking the{" "}
+                  <span className="font-semibold text-cobalt">
+                    {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.start ?? "")}–
+                    {formatTime12(selectedDay.slots.find((s) => s.index === selectedSlot)?.end ?? "")}
+                  </span>{" "}
+                  slot on {formatEventDate(selectedDay.event_date)} (IST).
+                </p>
+              )}
 
-            <button
-              type="submit"
-              disabled={status === "processing" || selectedSlot === null}
-              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_4px_20px_rgba(0,74,173,0.3)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_6px_30px_rgba(0,74,173,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {status === "processing"
-                ? "Submitting..."
-                : selectedSlot === null
-                  ? "Pick a slot to continue"
-                  : "Submit Pitch"}
-            </button>
+              <button
+                type="submit"
+                disabled={status === "processing" || selectedSlot === null}
+                className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_4px_20px_rgba(0,74,173,0.3)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_6px_30px_rgba(0,74,173,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {status === "processing"
+                  ? "Submitting..."
+                  : selectedSlot === null
+                    ? "Pick a slot to continue"
+                    : "Submit Pitch"}
+              </button>
+            </div>
           </form>
         </div>
       </div>
