@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse("No registrations found.", { status: 200 });
   }
 
-  const headers = ["Full Name", "Email", "Phone", "LinkedIn", "Role Preference", "Payment Status", "Razorpay Payment ID", "Registered At"];
+  const headers = ["Full Name", "Email", "Phone", "LinkedIn", "Role Preference", "Payment Status", "UTR", "Registered At"];
   const rows = data.map((r) => [
     r.full_name,
     r.email,
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     r.linkedin_url || "",
     r.role_preference || "",
     r.payment_status,
-    r.razorpay_payment_id || "",
+    r.utr || "",
     r.created_at,
   ]);
 

@@ -6,7 +6,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const RAZORPAY_PAYMENT_LINK = process.env.NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK || "";
+const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "";
+const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || "";
+const FEE = "₹199";
+
+const UTR_RE = /^[A-Za-z0-9-]{8,30}$/;
+const MAX_SCREENSHOT_BYTES = 5 * 1024 * 1024;
 
 interface FormData {
   fullName: string;
@@ -14,16 +19,19 @@ interface FormData {
   phone: string;
   linkedin: string;
   rolePreference: string;
+  utr: string;
 }
 
 type FormStatus = "idle" | "processing" | "success" | "error";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState<FormData>({
-    fullName: "", email: "", phone: "", linkedin: "", rolePreference: "",
+    fullName: "", email: "", phone: "", linkedin: "", rolePreference: "", utr: "",
   });
+  const [screenshot, setScreenshot] = useState<File | null>(null);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [copied, setCopied] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -51,17 +59,53 @@ export default function RegistrationForm() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setScreenshot(e.target.files?.[0] || null);
+  };
+
+  const copyUpi = async () => {
+    try {
+      await navigator.clipboard.writeText(UPI_ID);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable (e.g. insecure context) — the ID is still selectable.
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("processing");
     setErrorMsg("");
 
+    if (!UTR_RE.test(form.utr.trim())) {
+      setStatus("error");
+      setErrorMsg("The UTR / transaction ID looks invalid. Copy it from your payment app (8–30 letters and digits).");
+      return;
+    }
+    if (!screenshot) {
+      setStatus("error");
+      setErrorMsg("Attach your payment screenshot.");
+      return;
+    }
+    if (screenshot.size > MAX_SCREENSHOT_BYTES) {
+      setStatus("error");
+      setErrorMsg("Screenshot must be under 5 MB.");
+      return;
+    }
+
+    setStatus("processing");
+
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const body = new window.FormData();
+      body.append("fullName", form.fullName);
+      body.append("email", form.email);
+      body.append("phone", form.phone);
+      body.append("linkedin", form.linkedin);
+      body.append("rolePreference", form.rolePreference);
+      body.append("utr", form.utr.trim());
+      body.append("screenshot", screenshot);
+
+      const res = await fetch("/api/register", { method: "POST", body });
 
       if (!res.ok) {
         const data = await res.json();
@@ -85,9 +129,9 @@ export default function RegistrationForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-white">Almost There!</h3>
+            <h3 className="mb-2 text-2xl font-bold text-white">You&apos;re In!</h3>
             <p className="mb-6 text-white/90">
-              Your details are saved. Complete payment to confirm your spot at <strong className="text-white">Pitch to Hire</strong>.
+              Your registration for <strong className="text-white">Pitch to Hire</strong> is submitted. We&apos;ll verify your payment and confirm on WhatsApp within 48 hours.
             </p>
             <div className="glass rounded-xl p-5 text-left text-sm">
               <p className="text-white/90"><span className="text-white/90">Name:</span> <span className="text-white">{form.fullName}</span></p>
@@ -96,23 +140,8 @@ export default function RegistrationForm() {
               {form.rolePreference && (
                 <p className="text-white/90"><span className="text-white/90">Role:</span> <span className="text-white">{form.rolePreference}</span></p>
               )}
+              <p className="text-white/90"><span className="text-white/90">UTR:</span> <span className="text-white">{form.utr}</span></p>
             </div>
-            <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-left text-sm">
-              <p className="font-medium text-amber-400">Important</p>
-              <p className="mt-1 text-amber-200/70">
-                Use the <strong className="text-amber-300">same email &amp; phone number</strong> while making the payment. We verify your registration against your payment details.
-              </p>
-            </div>
-            {RAZORPAY_PAYMENT_LINK && (
-              <a
-                href={RAZORPAY_PAYMENT_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block w-full rounded-xl bg-cobalt py-4 text-center text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01]"
-              >
-                Pay ₹199 Now
-              </a>
-            )}
           </div>
         </div>
       </section>
@@ -134,7 +163,7 @@ export default function RegistrationForm() {
           <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/90">Register</p>
           {"Secure Your Spot".split(" ").map((w, i) => (
             <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
-              {w}{i < 2 ? "\u00A0" : ""}
+              {w}{i < 2 ? " " : ""}
             </span>
           ))}
           <p className="word mt-3 text-white/90">If you&apos;re serious about getting hired, this is for you.</p>
@@ -177,6 +206,66 @@ export default function RegistrationForm() {
               <input type="text" id="rolePreference" name="rolePreference" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="The role you want to be hired for" />
             </div>
 
+            {/* ── Payment ── */}
+            <div className="rounded-2xl border border-cobalt/30 bg-cobalt/[0.06] p-5">
+              <div className="flex items-baseline justify-between">
+                <p className="text-sm font-medium text-white/90">Registration fee</p>
+                <p className="text-2xl font-bold text-white">{FEE}</p>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-xs uppercase tracking-wider text-white/60">Pay via UPI</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <code className="flex-1 select-all break-all rounded-lg bg-black/30 px-3 py-2 font-mono text-sm text-white">
+                    {UPI_ID || "UPI ID not configured"}
+                  </code>
+                  {UPI_ID && (
+                    <button
+                      type="button"
+                      onClick={copyUpi}
+                      className="shrink-0 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white transition-colors hover:border-cobalt/50 hover:bg-cobalt/10"
+                    >
+                      {copied ? "Copied!" : "Copy ID"}
+                    </button>
+                  )}
+                </div>
+                {UPI_PHONE && (
+                  <p className="mt-2 text-xs text-white/60">
+                    or pay to number <b className="text-white/90">{UPI_PHONE}</b>
+                  </p>
+                )}
+              </div>
+
+              <p className="mt-3 text-xs text-white/60">
+                Pay {FEE} from any UPI app, then enter the transaction ID and attach the screenshot below. We verify every payment manually.
+              </p>
+
+              <div className="mt-4">
+                <label htmlFor="utr" className="mb-1.5 block text-sm font-medium text-white/90">
+                  Transaction ID / UTR <span className="text-white/90">*</span>
+                </label>
+                <input
+                  type="text" id="utr" name="utr" required value={form.utr} onChange={handleChange}
+                  minLength={8} maxLength={30}
+                  className={inputClasses + " font-mono"}
+                  placeholder="e.g. 415236789012"
+                />
+              </div>
+
+              <div className="mt-4">
+                <label htmlFor="screenshot" className="mb-1.5 block text-sm font-medium text-white/90">
+                  Payment Screenshot <span className="text-white/90">*</span>
+                </label>
+                <input
+                  type="file" id="screenshot" name="screenshot" required
+                  accept="image/*,application/pdf"
+                  onChange={handleFile}
+                  className="w-full cursor-pointer rounded-xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-3.5 text-sm text-white/80 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white"
+                />
+                <p className="mt-1.5 text-xs text-white/50">Image or PDF, max 5 MB.</p>
+              </div>
+            </div>
+
             {status === "error" && (
               <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">{errorMsg}</div>
             )}
@@ -186,10 +275,10 @@ export default function RegistrationForm() {
               disabled={status === "processing"}
               className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {status === "processing" ? "Registering..." : "Register & Pay (₹199)"}
+              {status === "processing" ? "Submitting..." : `Submit Registration (${FEE})`}
             </button>
 
-            <p className="text-center text-xs text-white/90">Secure payment powered by Razorpay</p>
+            <p className="text-center text-xs text-white/90">Payments are verified manually within 48 hours.</p>
           </form>
         </div>
       </div>
