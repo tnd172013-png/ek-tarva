@@ -6,8 +6,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "";
-const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || "";
+// The UPI ID is a public receiving address (already shown to every visitor),
+// so hardcoding it is safe. Env vars still win if set, e.g. to switch accounts.
+const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "9158214594-3@ybl";
+const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || "9158214594";
 const FEE = "₹249";
 
 const UTR_RE = /^[A-Za-z0-9-]{8,30}$/;
