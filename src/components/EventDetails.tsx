@@ -10,7 +10,7 @@ const details = [
   { icon: "🖥", label: "Mode", value: "Online (Live)" },
   { icon: "⏱", label: "Duration", value: "2-3 Hours" },
   { icon: "🏢", label: "Companies", value: "20+ Hiring Teams" },
-  { icon: "🎟", label: "Access Fee", value: "₹199" },
+  { icon: "🎟", label: "Access Fee", value: "₹249" },
 ];
 
 export default function EventDetails() {

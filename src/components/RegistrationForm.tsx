@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "";
 const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || "";
-const FEE = "₹199";
+const FEE = "₹249";
 
 const UTR_RE = /^[A-Za-z0-9-]{8,30}$/;
 const MAX_SCREENSHOT_BYTES = 5 * 1024 * 1024;

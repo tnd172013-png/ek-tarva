@@ -19,7 +19,7 @@ const openSans = Open_Sans({
 export const metadata: Metadata = {
   title: "Pitch to Hire | Ektarva — Where Companies Pitch, You Choose",
   description:
-    "A live hiring event for frontend developers. 20+ companies pitch their openings. You choose where you get hired. Book your spot for ₹199.",
+    "A live hiring event for frontend developers. 20+ companies pitch their openings. You choose where you get hired. Book your spot for ₹249.",
   openGraph: {
     title: "Pitch to Hire | Ektarva",
     description:
