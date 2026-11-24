@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,6 +59,14 @@ interface FormData {
   recruitmentType: string;
 }
 
+const RECRUITMENT_TYPES = ["Full Time Job", "Internship"] as const;
+
+/** Accepts 10-digit Indian mobiles, with or without +91 / 0 and spaces or dashes. */
+function cleanPhone(raw: string): string | null {
+  const d = raw.replace(/[\s-]/g, "").replace(/^(\+?91|0)/, "");
+  return /^[6-9]\d{9}$/.test(d) ? d : null;
+}
+
 type FormStatus = "idle" | "processing" | "success" | "error";
 
 export default function RegistrationForm() {
@@ -96,13 +105,25 @@ export default function RegistrationForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+
+    const phone = cleanPhone(form.phone);
+    if (!phone) {
+      setStatus("error");
+      setErrorMsg("Enter a valid 10-digit mobile number.");
+      return;
+    }
+    if (!form.recruitmentType) {
+      setStatus("error");
+      setErrorMsg("Choose whether you are looking for a full time job or an internship.");
+      return;
+    }
     setStatus("processing");
 
     try {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, phone }),
       });
       const order = await res.json();
       if (!res.ok) throw new Error(order.error || "Registration failed");
@@ -203,46 +224,42 @@ export default function RegistrationForm() {
 
         <div ref={formRef} className="glass-elevated rounded-3xl p-8 md:p-10" style={{ opacity: 0 }}>
           <form onSubmit={handleSubmit} className="space-y-5">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/50">About you</p>
             <div>
               <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/90">
                 Full Name <span className="text-white/90">*</span>
               </label>
-              <input type="text" id="fullName" name="fullName" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
+              <input type="text" id="fullName" name="fullName" autoComplete="name" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
             </div>
 
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/90">
                 Email <span className="text-white/90">*</span>
               </label>
-              <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
+              <input type="email" id="email" name="email" autoComplete="email" inputMode="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
             </div>
 
             <div>
               <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-white/90">
                 Phone Number <span className="text-white/90">*</span>
               </label>
-              <input type="tel" id="phone" name="phone" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="Your phone number" />
+              <input type="tel" id="phone" name="phone" autoComplete="tel" inputMode="tel" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="10-digit mobile number" />
+              <p className="mt-1.5 text-xs text-white/60">We share event details on WhatsApp, so use your WhatsApp number.</p>
             </div>
 
             <div>
               <label htmlFor="linkedin" className="mb-1.5 block text-sm font-medium text-white/90">
-                LinkedIn Profile URL
+                LinkedIn Profile URL <span className="text-xs text-white/50">(optional)</span>
               </label>
-              <input type="url" id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
+              <input type="url" id="linkedin" name="linkedin" autoComplete="url" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
             </div>
 
-            <div>
-              <label htmlFor="rolePreference" className="mb-1.5 block text-sm font-medium text-white/90">
-                Role Preference <span className="text-white/90">*</span>
-              </label>
-              <input type="text" id="rolePreference" name="rolePreference" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="The role you want to be hired for" />
-            </div>
-
+            <p className="pt-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">Your college</p>
             <div>
               <label htmlFor="collegeName" className="mb-1.5 block text-sm font-medium text-white/90">
                 College Name <span className="text-white/90">*</span>
               </label>
-              <input type="text" id="collegeName" name="collegeName" required value={form.collegeName} onChange={handleChange} className={inputClasses} placeholder="Your college name" />
+              <input type="text" id="collegeName" name="collegeName" autoComplete="organization" required value={form.collegeName} onChange={handleChange} className={inputClasses} placeholder="Your college name" />
             </div>
 
             <div>
@@ -252,15 +269,42 @@ export default function RegistrationForm() {
               <input type="text" id="courseYear" name="courseYear" required value={form.courseYear} onChange={handleChange} className={inputClasses} placeholder="e.g. BBA - 2nd year" />
             </div>
 
+            <p className="pt-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">What you are looking for</p>
             <div>
-              <label htmlFor="recruitmentType" className="mb-1.5 block text-sm font-medium text-white/90">
+              <label id="recruitmentTypeLabel" className="mb-1.5 block text-sm font-medium text-white/90">
                 Recruitment Type <span className="text-white/90">*</span>
               </label>
-              <select id="recruitmentType" name="recruitmentType" required value={form.recruitmentType} onChange={handleChange} className={inputClasses}>
-                <option value="" className="bg-neutral-900">Select recruitment type</option>
-                <option value="Full Time Job" className="bg-neutral-900">Full Time Job</option>
-                <option value="Internship" className="bg-neutral-900">Internship</option>
-              </select>
+              <div role="radiogroup" aria-labelledby="recruitmentTypeLabel" className="grid grid-cols-2 gap-3">
+                {RECRUITMENT_TYPES.map((t) => {
+                  const active = form.recruitmentType === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => setForm((prev) => ({ ...prev, recruitmentType: t }))}
+                      className={`rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-300 ${
+                        active
+                          ? "border-cobalt bg-cobalt/20 text-white shadow-[0_0_20px_rgba(0,74,173,0.25)]"
+                          : "border-white/10 bg-white/[0.03] text-white/80 hover:border-white/30"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="rolePreference" className="mb-1.5 block text-sm font-medium text-white/90">
+                Role Preference <span className="text-white/90">*</span>
+              </label>
+              <input type="text" id="rolePreference" name="rolePreference" list="role-options" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="Pick one or type your own" />
+              <datalist id="role-options">
+                {ROLES.map((r) => <option key={r} value={r} />)}
+              </datalist>
             </div>
 
             {/* ── Payment ── */}
@@ -276,7 +320,7 @@ export default function RegistrationForm() {
             </div>
 
             {status === "error" && (
-              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">{errorMsg}</div>
+              <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">{errorMsg}</div>
             )}
 
             <button
