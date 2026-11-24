@@ -202,136 +202,155 @@ export default function RegistrationForm() {
   }
 
   const inputClasses =
-    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/90 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
+    "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-white placeholder:text-white/40 outline-none transition-all duration-300 focus:border-cobalt/50 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,74,173,0.15)]";
+
+  const label = "mb-1.5 block text-sm font-medium text-white/90";
+  const sectionTitle = (n: number, text: string) => (
+    <div className="mb-5 flex items-center gap-3">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-cobalt/20 text-xs font-semibold text-white ring-1 ring-cobalt/40">{n}</span>
+      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-white/80">{text}</p>
+      <span className="h-px flex-1 bg-white/10" />
+    </div>
+  );
 
   return (
-    <section ref={sectionRef} id="register" className="relative bg-bg-primary px-6 py-16 md:py-20">
+    <section ref={sectionRef} id="register" className="relative bg-bg-primary px-6 py-16 md:py-24">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 40% 50% at 50% 60%, rgba(0,74,173,0.08), transparent)" }}
+        style={{ background: "radial-gradient(ellipse 50% 50% at 25% 40%, rgba(0,74,173,0.12), transparent)" }}
       />
 
-      <div className="relative z-10 mx-auto max-w-lg">
-        <div ref={headingRef} className="mb-10 text-center">
-          <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/90">Register</p>
-          {"Secure Your Spot".split(" ").map((w, i) => (
-            <span key={i} className="word inline-block text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
-              {w}{i < 2 ? " " : ""}
-            </span>
-          ))}
-          <p className="word mt-3 text-white/90">If you&apos;re serious about getting hired, this is for you.</p>
-        </div>
+      <div className="relative z-10 mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">
+        {/* ── Left: pitch + fee ── */}
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <div ref={headingRef}>
+            <p className="word mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/90">Register</p>
+            <h2 className="mb-4 text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">
+              {"Secure Your Spot".split(" ").map((w, i) => (
+                <span key={i} className="word inline-block">{w}{i < 2 ? " " : ""}</span>
+              ))}
+            </h2>
+            <p className="word max-w-md text-white/80">If you&apos;re serious about getting hired, this is for you.</p>
+          </div>
 
-        <div ref={formRef} className="glass-elevated rounded-3xl p-8 md:p-10" style={{ opacity: 0 }}>
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/50">About you</p>
-            <div>
-              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-white/90">
-                Full Name <span className="text-white/90">*</span>
-              </label>
-              <input type="text" id="fullName" name="fullName" autoComplete="name" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
+          <ul className="mt-8 space-y-4">
+            {[
+              ["Live pitches", "20+ companies pitch their openings to you, one by one."],
+              ["You choose", "Hear the role, tech stack and expectations, then pick where to apply."],
+              ["Details on WhatsApp", "We message the joining details to the number you give."],
+            ].map(([t, d]) => (
+              <li key={t} className="flex gap-3">
+                <svg className="mt-0.5 h-5 w-5 flex-none text-cobalt-light" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <p className="text-sm text-white/70"><span className="font-semibold text-white">{t}.</span> {d}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 rounded-2xl border border-cobalt/30 bg-cobalt/[0.07] p-5">
+            <div className="flex items-baseline justify-between">
+              <p className="text-sm font-medium text-white/90">Registration fee</p>
+              <p className="text-3xl font-bold text-white">{FEE}</p>
             </div>
+            <p className="mt-2 text-xs text-white/60">
+              One-time. You pay securely on the next step with UPI, card or net banking, powered by Razorpay.
+            </p>
+          </div>
+        </aside>
 
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/90">
-                Email <span className="text-white/90">*</span>
-              </label>
-              <input type="email" id="email" name="email" autoComplete="email" inputMode="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-white/90">
-                Phone Number <span className="text-white/90">*</span>
-              </label>
-              <input type="tel" id="phone" name="phone" autoComplete="tel" inputMode="tel" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="10-digit mobile number" />
-              <p className="mt-1.5 text-xs text-white/60">We share event details on WhatsApp, so use your WhatsApp number.</p>
-            </div>
-
-            <div>
-              <label htmlFor="linkedin" className="mb-1.5 block text-sm font-medium text-white/90">
-                LinkedIn Profile URL <span className="text-xs text-white/50">(optional)</span>
-              </label>
-              <input type="url" id="linkedin" name="linkedin" autoComplete="url" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
-            </div>
-
-            <p className="pt-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">Your college</p>
-            <div>
-              <label htmlFor="collegeName" className="mb-1.5 block text-sm font-medium text-white/90">
-                College Name <span className="text-white/90">*</span>
-              </label>
-              <input type="text" id="collegeName" name="collegeName" autoComplete="organization" required value={form.collegeName} onChange={handleChange} className={inputClasses} placeholder="Your college name" />
-            </div>
-
-            <div>
-              <label htmlFor="courseYear" className="mb-1.5 block text-sm font-medium text-white/90">
-                Course &amp; Year <span className="text-white/90">*</span>
-              </label>
-              <input type="text" id="courseYear" name="courseYear" required value={form.courseYear} onChange={handleChange} className={inputClasses} placeholder="e.g. BBA - 2nd year" />
-            </div>
-
-            <p className="pt-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">What you are looking for</p>
-            <div>
-              <label id="recruitmentTypeLabel" className="mb-1.5 block text-sm font-medium text-white/90">
-                Recruitment Type <span className="text-white/90">*</span>
-              </label>
-              <div role="radiogroup" aria-labelledby="recruitmentTypeLabel" className="grid grid-cols-2 gap-3">
-                {RECRUITMENT_TYPES.map((t) => {
-                  const active = form.recruitmentType === t;
-                  return (
-                    <button
-                      key={t}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() => setForm((prev) => ({ ...prev, recruitmentType: t }))}
-                      className={`rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-300 ${
-                        active
-                          ? "border-cobalt bg-cobalt/20 text-white shadow-[0_0_20px_rgba(0,74,173,0.25)]"
-                          : "border-white/10 bg-white/[0.03] text-white/80 hover:border-white/30"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
+        {/* ── Right: form ── */}
+        <div ref={formRef} className="glass-elevated rounded-3xl p-6 sm:p-8 md:p-10" style={{ opacity: 0 }}>
+          <form onSubmit={handleSubmit} className="space-y-9">
+            <fieldset>
+              {sectionTitle(1, "About you")}
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="fullName" className={label}>Full Name <span className="text-white/90">*</span></label>
+                  <input type="text" id="fullName" name="fullName" autoComplete="name" required value={form.fullName} onChange={handleChange} className={inputClasses} placeholder="Your full name" />
+                </div>
+                <div>
+                  <label htmlFor="email" className={label}>Email <span className="text-white/90">*</span></label>
+                  <input type="email" id="email" name="email" autoComplete="email" inputMode="email" required value={form.email} onChange={handleChange} className={inputClasses} placeholder="you@example.com" />
+                </div>
+                <div>
+                  <label htmlFor="phone" className={label}>WhatsApp Number <span className="text-white/90">*</span></label>
+                  <input type="tel" id="phone" name="phone" autoComplete="tel" inputMode="tel" required value={form.phone} onChange={handleChange} className={inputClasses} placeholder="10-digit mobile number" />
+                </div>
+                <div>
+                  <label htmlFor="linkedin" className={label}>LinkedIn Profile <span className="text-xs text-white/50">(optional)</span></label>
+                  <input type="url" id="linkedin" name="linkedin" autoComplete="url" value={form.linkedin} onChange={handleChange} className={inputClasses} placeholder="https://linkedin.com/in/yourname" />
+                </div>
               </div>
-            </div>
+            </fieldset>
 
-            <div>
-              <label htmlFor="rolePreference" className="mb-1.5 block text-sm font-medium text-white/90">
-                Role Preference <span className="text-white/90">*</span>
-              </label>
-              <input type="text" id="rolePreference" name="rolePreference" list="role-options" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="Pick one or type your own" />
-              <datalist id="role-options">
-                {ROLES.map((r) => <option key={r} value={r} />)}
-              </datalist>
-            </div>
-
-            {/* ── Payment ── */}
-            <div className="rounded-2xl border border-cobalt/30 bg-cobalt/[0.06] p-5">
-              <div className="flex items-baseline justify-between">
-                <p className="text-sm font-medium text-white/90">Registration fee</p>
-                <p className="text-2xl font-bold text-white">{FEE}</p>
+            <fieldset>
+              {sectionTitle(2, "Your college")}
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="collegeName" className={label}>College Name <span className="text-white/90">*</span></label>
+                  <input type="text" id="collegeName" name="collegeName" autoComplete="organization" required value={form.collegeName} onChange={handleChange} className={inputClasses} placeholder="Your college name" />
+                </div>
+                <div>
+                  <label htmlFor="courseYear" className={label}>Course &amp; Year <span className="text-white/90">*</span></label>
+                  <input type="text" id="courseYear" name="courseYear" required value={form.courseYear} onChange={handleChange} className={inputClasses} placeholder="e.g. BBA - 2nd year" />
+                </div>
               </div>
+            </fieldset>
 
-              <p className="mt-3 text-xs text-white/60">
-                You pay securely on the next step with UPI, card or net banking, powered by Razorpay.
-              </p>
+            <fieldset>
+              {sectionTitle(3, "What you are looking for")}
+              <div className="space-y-5">
+                <div>
+                  <label id="recruitmentTypeLabel" className={label}>Recruitment Type <span className="text-white/90">*</span></label>
+                  <div role="radiogroup" aria-labelledby="recruitmentTypeLabel" className="grid grid-cols-2 gap-3">
+                    {RECRUITMENT_TYPES.map((t) => {
+                      const active = form.recruitmentType === t;
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          role="radio"
+                          aria-checked={active}
+                          onClick={() => setForm((prev) => ({ ...prev, recruitmentType: t }))}
+                          className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-300 ${
+                            active
+                              ? "border-cobalt bg-cobalt/20 text-white shadow-[0_0_20px_rgba(0,74,173,0.25)]"
+                              : "border-white/10 bg-white/[0.03] text-white/80 hover:border-white/30"
+                          }`}
+                        >
+                          <span className={`h-3.5 w-3.5 rounded-full border ${active ? "border-cobalt-light bg-cobalt-light" : "border-white/30"}`} aria-hidden="true" />
+                          {t}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="rolePreference" className={label}>Role Preference <span className="text-white/90">*</span></label>
+                  <input type="text" id="rolePreference" name="rolePreference" list="role-options" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="Pick one or type your own" />
+                  <datalist id="role-options">
+                    {ROLES.map((r) => <option key={r} value={r} />)}
+                  </datalist>
+                </div>
+              </div>
+            </fieldset>
+
+            <div className="space-y-4">
+              {status === "error" && (
+                <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">{errorMsg}</div>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === "processing"}
+                className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {status === "processing" ? "Opening payment..." : `Pay ${FEE} & Register`}
+              </button>
+
+              <p className="text-center text-xs text-white/70">Your spot is confirmed as soon as the payment goes through.</p>
             </div>
-
-            {status === "error" && (
-              <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">{errorMsg}</div>
-            )}
-
-            <button
-              type="submit"
-              disabled={status === "processing"}
-              className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {status === "processing" ? "Opening payment..." : `Pay ${FEE} & Register`}
-            </button>
-
-            <p className="text-center text-xs text-white/90">Your spot is confirmed as soon as the payment goes through.</p>
           </form>
         </div>
       </div>
