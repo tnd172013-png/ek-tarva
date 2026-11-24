@@ -6,14 +6,46 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// The UPI ID is a public receiving address (already shown to every visitor),
-// so hardcoding it is safe. Env vars still win if set, e.g. to switch accounts.
-const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "9158214594-3@ybl";
-const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || "9158214594";
 const FEE = "₹249";
+const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
-const UTR_RE = /^[A-Za-z0-9-]{8,30}$/;
-const MAX_SCREENSHOT_BYTES = 5 * 1024 * 1024;
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+interface RazorpayOptions {
+  key: string;
+  order_id: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  prefill: { name: string; email: string; contact: string };
+  theme: { color: string };
+  handler: (r: RazorpayResponse) => void;
+  modal: { ondismiss: () => void };
+}
+interface RazorpayInstance {
+  open: () => void;
+  on: (event: "payment.failed", cb: (r: { error?: { description?: string } }) => void) => void;
+}
+declare global {
+  interface Window {
+    Razorpay?: new (o: RazorpayOptions) => RazorpayInstance;
+  }
+}
+
+function loadCheckout(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const el = document.createElement("script");
+    el.src = CHECKOUT_SRC;
+    el.onload = () => resolve(true);
+    el.onerror = () => resolve(false);
+    document.body.appendChild(el);
+  });
+}
 
 interface FormData {
   fullName: string;
@@ -21,19 +53,19 @@ interface FormData {
   phone: string;
   linkedin: string;
   rolePreference: string;
-  utr: string;
+  collegeName: string;
+  courseYear: string;
+  recruitmentType: string;
 }
 
 type FormStatus = "idle" | "processing" | "success" | "error";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState<FormData>({
-    fullName: "", email: "", phone: "", linkedin: "", rolePreference: "", utr: "",
+    fullName: "", email: "", phone: "", linkedin: "", rolePreference: "", collegeName: "", courseYear: "", recruitmentType: "",
   });
-  const [screenshot, setScreenshot] = useState<File | null>(null);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [copied, setCopied] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -61,58 +93,54 @@ export default function RegistrationForm() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setScreenshot(e.target.files?.[0] || null);
-  };
-
-  const copyUpi = async () => {
-    try {
-      await navigator.clipboard.writeText(UPI_ID);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard unavailable (e.g. insecure context) — the ID is still selectable.
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-
-    if (!UTR_RE.test(form.utr.trim())) {
-      setStatus("error");
-      setErrorMsg("The UTR / transaction ID looks invalid. Copy it from your payment app (8–30 letters and digits).");
-      return;
-    }
-    if (!screenshot) {
-      setStatus("error");
-      setErrorMsg("Attach your payment screenshot.");
-      return;
-    }
-    if (screenshot.size > MAX_SCREENSHOT_BYTES) {
-      setStatus("error");
-      setErrorMsg("Screenshot must be under 5 MB.");
-      return;
-    }
-
     setStatus("processing");
 
     try {
-      const body = new window.FormData();
-      body.append("fullName", form.fullName);
-      body.append("email", form.email);
-      body.append("phone", form.phone);
-      body.append("linkedin", form.linkedin);
-      body.append("rolePreference", form.rolePreference);
-      body.append("utr", form.utr.trim());
-      body.append("screenshot", screenshot);
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const order = await res.json();
+      if (!res.ok) throw new Error(order.error || "Registration failed");
 
-      const res = await fetch("/api/register", { method: "POST", body });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Registration failed");
+      if (!(await loadCheckout()) || !window.Razorpay) {
+        throw new Error("Could not load the payment window. Check your connection and try again.");
       }
+
+      await new Promise<void>((resolve, reject) => {
+        const rzp = new window.Razorpay!({
+          key: order.keyId,
+          order_id: order.orderId,
+          amount: order.amount,
+          currency: order.currency,
+          name: "Ektarva",
+          description: "Pitch to Hire registration",
+          prefill: { name: form.fullName, email: form.email, contact: form.phone },
+          theme: { color: "#0064AD" },
+          handler: async (r) => {
+            try {
+              const v = await fetch("/api/payment/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(r),
+              });
+              if (!v.ok) throw new Error((await v.json()).error || "Payment could not be verified.");
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          },
+          modal: { ondismiss: () => reject(new Error("Payment was not completed. You can try again.")) },
+        });
+        rzp.on("payment.failed", (r) => {
+          reject(new Error(r.error?.description || "Payment failed. Please try again."));
+        });
+        rzp.open();
+      });
 
       setStatus("success");
     } catch (err) {
@@ -133,16 +161,18 @@ export default function RegistrationForm() {
             </div>
             <h3 className="mb-2 text-2xl font-bold text-white">You&apos;re In!</h3>
             <p className="mb-6 text-white/90">
-              Your registration for <strong className="text-white">Pitch to Hire</strong> is submitted. We&apos;ll verify your payment and confirm on WhatsApp within 48 hours.
+              Payment received. Your registration for <strong className="text-white">Pitch to Hire</strong> is confirmed. We&apos;ll share the details on WhatsApp.
             </p>
             <div className="glass rounded-xl p-5 text-left text-sm">
               <p className="text-white/90"><span className="text-white/90">Name:</span> <span className="text-white">{form.fullName}</span></p>
               <p className="text-white/90"><span className="text-white/90">Email:</span> <span className="text-white">{form.email}</span></p>
               <p className="text-white/90"><span className="text-white/90">Phone:</span> <span className="text-white">{form.phone}</span></p>
+              <p className="text-white/90"><span className="text-white/90">College:</span> <span className="text-white">{form.collegeName}</span></p>
+              <p className="text-white/90"><span className="text-white/90">Course:</span> <span className="text-white">{form.courseYear}</span></p>
+              <p className="text-white/90"><span className="text-white/90">Looking for:</span> <span className="text-white">{form.recruitmentType}</span></p>
               {form.rolePreference && (
                 <p className="text-white/90"><span className="text-white/90">Role:</span> <span className="text-white">{form.rolePreference}</span></p>
               )}
-              <p className="text-white/90"><span className="text-white/90">UTR:</span> <span className="text-white">{form.utr}</span></p>
             </div>
           </div>
         </div>
@@ -208,6 +238,31 @@ export default function RegistrationForm() {
               <input type="text" id="rolePreference" name="rolePreference" required value={form.rolePreference} onChange={handleChange} className={inputClasses} placeholder="The role you want to be hired for" />
             </div>
 
+            <div>
+              <label htmlFor="collegeName" className="mb-1.5 block text-sm font-medium text-white/90">
+                College Name <span className="text-white/90">*</span>
+              </label>
+              <input type="text" id="collegeName" name="collegeName" required value={form.collegeName} onChange={handleChange} className={inputClasses} placeholder="Your college name" />
+            </div>
+
+            <div>
+              <label htmlFor="courseYear" className="mb-1.5 block text-sm font-medium text-white/90">
+                Course &amp; Year <span className="text-white/90">*</span>
+              </label>
+              <input type="text" id="courseYear" name="courseYear" required value={form.courseYear} onChange={handleChange} className={inputClasses} placeholder="e.g. BBA - 2nd year" />
+            </div>
+
+            <div>
+              <label htmlFor="recruitmentType" className="mb-1.5 block text-sm font-medium text-white/90">
+                Recruitment Type <span className="text-white/90">*</span>
+              </label>
+              <select id="recruitmentType" name="recruitmentType" required value={form.recruitmentType} onChange={handleChange} className={inputClasses}>
+                <option value="" className="bg-neutral-900">Select recruitment type</option>
+                <option value="Full Time Job" className="bg-neutral-900">Full Time Job</option>
+                <option value="Internship" className="bg-neutral-900">Internship</option>
+              </select>
+            </div>
+
             {/* ── Payment ── */}
             <div className="rounded-2xl border border-cobalt/30 bg-cobalt/[0.06] p-5">
               <div className="flex items-baseline justify-between">
@@ -215,57 +270,9 @@ export default function RegistrationForm() {
                 <p className="text-2xl font-bold text-white">{FEE}</p>
               </div>
 
-              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs uppercase tracking-wider text-white/60">Pay via UPI</p>
-                <div className="mt-2 flex items-center gap-2">
-                  <code className="flex-1 select-all break-all rounded-lg bg-black/30 px-3 py-2 font-mono text-sm text-white">
-                    {UPI_ID || "UPI ID not configured"}
-                  </code>
-                  {UPI_ID && (
-                    <button
-                      type="button"
-                      onClick={copyUpi}
-                      className="shrink-0 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white transition-colors hover:border-cobalt/50 hover:bg-cobalt/10"
-                    >
-                      {copied ? "Copied!" : "Copy ID"}
-                    </button>
-                  )}
-                </div>
-                {UPI_PHONE && (
-                  <p className="mt-2 text-xs text-white/60">
-                    or pay to number <b className="text-white/90">{UPI_PHONE}</b>
-                  </p>
-                )}
-              </div>
-
               <p className="mt-3 text-xs text-white/60">
-                Pay {FEE} from any UPI app, then enter the transaction ID and attach the screenshot below. We verify every payment manually.
+                You pay securely on the next step with UPI, card or net banking, powered by Razorpay.
               </p>
-
-              <div className="mt-4">
-                <label htmlFor="utr" className="mb-1.5 block text-sm font-medium text-white/90">
-                  Transaction ID / UTR <span className="text-white/90">*</span>
-                </label>
-                <input
-                  type="text" id="utr" name="utr" required value={form.utr} onChange={handleChange}
-                  minLength={8} maxLength={30}
-                  className={inputClasses + " font-mono"}
-                  placeholder="e.g. 415236789012"
-                />
-              </div>
-
-              <div className="mt-4">
-                <label htmlFor="screenshot" className="mb-1.5 block text-sm font-medium text-white/90">
-                  Payment Screenshot <span className="text-white/90">*</span>
-                </label>
-                <input
-                  type="file" id="screenshot" name="screenshot" required
-                  accept="image/*,application/pdf"
-                  onChange={handleFile}
-                  className="w-full cursor-pointer rounded-xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-3.5 text-sm text-white/80 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white"
-                />
-                <p className="mt-1.5 text-xs text-white/50">Image or PDF, max 5 MB.</p>
-              </div>
             </div>
 
             {status === "error" && (
@@ -277,10 +284,10 @@ export default function RegistrationForm() {
               disabled={status === "processing"}
               className="w-full rounded-xl bg-cobalt py-4 text-lg font-semibold text-white shadow-[0_0_30px_rgba(0,74,173,0.3)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,74,173,0.5)] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {status === "processing" ? "Submitting..." : `Submit Registration (${FEE})`}
+              {status === "processing" ? "Opening payment..." : `Pay ${FEE} & Register`}
             </button>
 
-            <p className="text-center text-xs text-white/90">Payments are verified manually within 48 hours.</p>
+            <p className="text-center text-xs text-white/90">Your spot is confirmed as soon as the payment goes through.</p>
           </form>
         </div>
       </div>

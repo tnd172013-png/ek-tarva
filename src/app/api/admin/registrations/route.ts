@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("registrations")
-    .select("id, full_name, email, phone, role_preference, utr, screenshot_path, payment_status, created_at")
+    .select("id, full_name, email, phone, role_preference, college_name, course_year, recruitment_type, utr, screenshot_path, payment_status, payment_method, razorpay_payment_id, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -50,8 +50,13 @@ export async function GET(req: NextRequest) {
       email: r.email,
       phone: r.phone,
       rolePreference: r.role_preference,
+      collegeName: r.college_name ?? null,
+      courseYear: r.course_year ?? null,
+      recruitmentType: r.recruitment_type ?? null,
       utr: r.utr,
       paymentStatus: r.payment_status,
+      paymentMethod: r.payment_method ?? "upi",
+      razorpayPaymentId: r.razorpay_payment_id ?? null,
       createdAt: r.created_at,
       screenshotUrl: r.screenshot_path ? signedByPath.get(r.screenshot_path) ?? null : null,
       duplicateUtr: r.utr ? (utrCounts.get(r.utr) ?? 0) > 1 : false,

@@ -13,8 +13,13 @@ interface Registration {
   email: string;
   phone: string;
   rolePreference: string | null;
+  collegeName: string | null;
+  courseYear: string | null;
+  recruitmentType: string | null;
   utr: string | null;
-  paymentStatus: "paid" | "pending";
+  paymentStatus: "paid" | "pending" | "awaiting_payment" | "failed";
+  paymentMethod: string;
+  razorpayPaymentId: string | null;
   createdAt: string;
   screenshotUrl: string | null;
   duplicateUtr: boolean;
@@ -118,11 +123,11 @@ export default function AdminPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return registrations.filter((r) => {
-      if (filter === "pending" && r.paymentStatus !== "pending") return false;
+      if (filter === "pending" && r.paymentStatus === "paid") return false;
       if (filter === "paid" && r.paymentStatus !== "paid") return false;
       if (filter === "duplicates" && !r.duplicateUtr) return false;
       if (!q) return true;
-      return [r.fullName, r.email, r.phone, r.utr ?? "", r.rolePreference ?? ""]
+      return [r.fullName, r.email, r.phone, r.utr ?? "", r.rolePreference ?? "", r.collegeName ?? "", r.courseYear ?? "", r.recruitmentType ?? ""]
         .join(" ")
         .toLowerCase()
         .includes(q);
@@ -306,6 +311,9 @@ export default function AdminPage() {
                   <tr className="border-b border-white/10 bg-white/[0.03] text-xs uppercase tracking-wider text-white/40">
                     <th className="px-4 py-3.5 font-medium">Candidate</th>
                     <th className="px-4 py-3.5 font-medium">Role</th>
+                    <th className="px-4 py-3.5 font-medium">College</th>
+                    <th className="px-4 py-3.5 font-medium">Course &amp; Year</th>
+                    <th className="px-4 py-3.5 font-medium">Type</th>
                     <th className="px-4 py-3.5 font-medium">UTR</th>
                     <th className="px-4 py-3.5 font-medium">Registered</th>
                     <th className="px-4 py-3.5 font-medium">Status</th>
@@ -330,6 +338,9 @@ export default function AdminPage() {
                         <p className="text-xs text-white/50">{r.phone}</p>
                       </td>
                       <td className="px-4 py-3.5 text-white/70">{r.rolePreference || "—"}</td>
+                      <td className="px-4 py-3.5 text-white/70">{r.collegeName || "—"}</td>
+                      <td className="px-4 py-3.5 text-white/70">{r.courseYear || "—"}</td>
+                      <td className="px-4 py-3.5 text-white/70">{r.recruitmentType || "—"}</td>
                       <td className="px-4 py-3.5">
                         <span className="font-mono text-xs text-white/80">{r.utr || "—"}</span>
                         {r.duplicateUtr && (
@@ -347,7 +358,15 @@ export default function AdminPage() {
                       <td className="px-4 py-3.5">
                         {r.paymentStatus === "paid" ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Verified
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> {r.paymentMethod === "razorpay" ? "Paid" : "Verified"}
+                          </span>
+                        ) : r.paymentStatus === "failed" ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/15 px-2.5 py-1 text-xs font-medium text-red-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-red-400" /> Failed
+                          </span>
+                        ) : r.paymentStatus === "awaiting_payment" ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-medium text-amber-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> Awaiting payment
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-medium text-amber-400">
@@ -357,6 +376,12 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3.5">
                         <div className="flex items-center justify-end gap-2">
+                          {r.paymentMethod === "razorpay" ? (
+                            <span className="font-mono text-xs text-white/50" title="Razorpay payment id. Settled automatically.">
+                              {r.razorpayPaymentId || "Razorpay"}
+                            </span>
+                          ) : (
+                          <>
                           {r.screenshotUrl ? (
                             <a
                               href={r.screenshotUrl}
@@ -380,6 +405,8 @@ export default function AdminPage() {
                           >
                             {togglingId === r.id ? "…" : r.paymentStatus === "paid" ? "Unverify" : "Verify"}
                           </button>
+                          </>
+                          )}
                         </div>
                       </td>
                     </tr>

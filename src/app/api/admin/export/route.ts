@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   if (filter === "paid") {
     query = query.eq("payment_status", "paid");
   } else if (filter === "pending") {
-    query = query.eq("payment_status", "pending");
+    query = query.neq("payment_status", "paid");
   }
 
   const { data, error } = await query;
@@ -30,15 +30,20 @@ export async function GET(req: NextRequest) {
     return new NextResponse("No registrations found.", { status: 200 });
   }
 
-  const headers = ["Full Name", "Email", "Phone", "LinkedIn", "Role Preference", "Payment Status", "UTR", "Registered At"];
+  const headers = ["Full Name", "Email", "Phone", "LinkedIn", "Role Preference", "College", "Course & Year", "Recruitment Type", "Payment Status", "Payment Method", "UTR", "Razorpay Payment ID", "Registered At"];
   const rows = data.map((r) => [
     r.full_name,
     r.email,
     r.phone,
     r.linkedin_url || "",
     r.role_preference || "",
+    r.college_name || "",
+    r.course_year || "",
+    r.recruitment_type || "",
     r.payment_status,
+    r.payment_method || "upi",
     r.utr || "",
+    r.razorpay_payment_id || "",
     r.created_at,
   ]);
 

@@ -13,10 +13,12 @@ export async function POST(
   const { id } = await params;
   const { verified } = await req.json();
 
+  // Razorpay rows are settled by signature + webhook only; never by hand.
   const { data, error } = await supabase
     .from("registrations")
     .update({ payment_status: verified ? "paid" : "pending" })
     .eq("id", id)
+    .neq("payment_method", "razorpay")
     .select("id, payment_status")
     .single();
 

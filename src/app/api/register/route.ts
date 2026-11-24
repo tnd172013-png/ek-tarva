@@ -1,155 +1,111 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { razorpay, FEE_PAISE, CURRENCY } from "@/lib/razorpay";
 
-const PENDING_COOLDOWN_MS = 10 * 60 * 1000;
-const MAX_SCREENSHOT_BYTES = 5 * 1024 * 1024;
-const SCREENSHOT_BUCKET = "payment-proofs";
+export const runtime = "nodejs";
 
-const UTR_RE = /^[A-Za-z0-9-]{8,30}$/;
+const RECRUITMENT_TYPES = ["Full Time Job", "Internship"];
 
-function screenshotExt(file: File): string | null {
-  if (file.type === "application/pdf") return "pdf";
-  if (file.type.startsWith("image/")) {
-    const sub = file.type.slice("image/".length);
-    return /^[a-z0-9+.-]+$/i.test(sub) ? sub.replace("jpeg", "jpg") : "img";
-  }
-  return null;
+// Best-effort per-instance throttle: each call creates a Razorpay order.
+const WINDOW_MS = 60 * 60 * 1000;
+const MAX_PER_WINDOW = 10;
+const hits = new Map<string, number[]>();
+
+function throttled(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  return recent.length > MAX_PER_WINDOW;
 }
 
-async function uploadScreenshot(file: File, email: string): Promise<string | { error: string }> {
-  const ext = screenshotExt(file);
-  if (!ext) return { error: "Screenshot must be an image or a PDF." };
-  if (file.size > MAX_SCREENSHOT_BYTES) return { error: "Screenshot must be under 5 MB." };
-
-  const safeEmail = email.toLowerCase().replace(/[^a-z0-9]/g, "_");
-  const path = `${safeEmail}-${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage
-    .from(SCREENSHOT_BUCKET)
-    .upload(path, file, { contentType: file.type, upsert: false });
-
-  if (error) {
-    console.error("Screenshot upload error:", error);
-    return { error: "Could not save your screenshot. Please try again." };
-  }
-  return path;
-}
-
+/** Saves the registration as awaiting_payment and creates a Razorpay order.
+ *  The amount is decided here, never by the browser. */
 export async function POST(req: NextRequest) {
   try {
-    const form = await req.formData();
-    const fullName = String(form.get("fullName") || "").trim();
-    const email = String(form.get("email") || "").trim();
-    const phone = String(form.get("phone") || "").trim();
-    const linkedin = String(form.get("linkedin") || "").trim();
-    const rolePreference = String(form.get("rolePreference") || "").trim();
-    const utr = String(form.get("utr") || "").trim();
-    const screenshot = form.get("screenshot");
+    if (!razorpay) {
+      return NextResponse.json({ error: "Payments are not available right now." }, { status: 503 });
+    }
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+    if (throttled(ip)) {
+      return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429 });
+    }
 
-    if (!fullName || !email || !phone) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    const b = await req.json().catch(() => null);
+    const fullName = String(b?.fullName ?? "").trim();
+    const email = String(b?.email ?? "").trim();
+    const phone = String(b?.phone ?? "").trim();
+    const linkedin = String(b?.linkedin ?? "").trim();
+    const rolePreference = String(b?.rolePreference ?? "").trim();
+    const collegeName = String(b?.collegeName ?? "").trim();
+    const courseYear = String(b?.courseYear ?? "").trim();
+    const recruitmentType = String(b?.recruitmentType ?? "").trim();
+
+    if (!fullName || !email || !phone || !collegeName || !courseYear) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
-    if (!UTR_RE.test(utr)) {
-      return NextResponse.json(
-        { error: "The UTR / transaction ID looks invalid. Copy it from your payment app." },
-        { status: 400 }
-      );
-    }
-    if (!(screenshot instanceof File) || screenshot.size === 0) {
-      return NextResponse.json(
-        { error: "Payment screenshot is required." },
-        { status: 400 }
-      );
+    if (!RECRUITMENT_TYPES.includes(recruitmentType)) {
+      return NextResponse.json({ error: "Select a recruitment type." }, { status: 400 });
     }
 
     const { data: existing } = await supabase
       .from("registrations")
-      .select("id, payment_status, created_at")
+      .select("id, payment_status")
       .eq("email", email)
-      .limit(1)
-      .single();
+      .maybeSingle();
 
     if (existing?.payment_status === "paid") {
-      return NextResponse.json(
-        { error: "This email is already registered and verified." },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "This email is already registered and paid." }, { status: 409 });
     }
 
-    if (existing?.payment_status === "pending") {
-      const ageMs = Date.now() - new Date(existing.created_at).getTime();
-      if (ageMs < PENDING_COOLDOWN_MS) {
-        return NextResponse.json(
-          {
-            error:
-              "A registration for this email was just submitted and is awaiting verification. If you need to change something, try again in 10 minutes.",
-          },
-          { status: 409 }
-        );
-      }
-
-      const uploaded = await uploadScreenshot(screenshot, email);
-      if (typeof uploaded !== "string") {
-        return NextResponse.json({ error: uploaded.error }, { status: 400 });
-      }
-
-      const { error: updateError } = await supabase
-        .from("registrations")
-        .update({
-          full_name: fullName,
-          phone,
-          linkedin_url: linkedin || null,
-          role_preference: rolePreference || null,
-          utr,
-          screenshot_path: uploaded,
-          created_at: new Date().toISOString(),
-        })
-        .eq("id", existing.id);
-
-      if (updateError) {
-        console.error("Supabase update error:", updateError);
-        return NextResponse.json(
-          { error: "Registration failed. Please try again." },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ success: true });
-    }
-
-    const uploaded = await uploadScreenshot(screenshot, email);
-    if (typeof uploaded !== "string") {
-      return NextResponse.json({ error: uploaded.error }, { status: 400 });
-    }
-
-    const { error } = await supabase.from("registrations").insert({
+    const fields = {
       full_name: fullName,
-      email,
       phone,
       linkedin_url: linkedin || null,
       role_preference: rolePreference || null,
-      utr,
-      screenshot_path: uploaded,
-      payment_status: "pending",
-    });
+      college_name: collegeName,
+      course_year: courseYear,
+      recruitment_type: recruitmentType,
+      payment_method: "razorpay",
+      payment_status: "awaiting_payment",
+      created_at: new Date().toISOString(),
+    };
 
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return NextResponse.json(
-        { error: "Registration failed. Please try again." },
-        { status: 500 }
-      );
+    let regId = existing?.id as string | undefined;
+    if (regId) {
+      const { error } = await supabase.from("registrations").update(fields).eq("id", regId);
+      if (error) throw error;
+    } else {
+      const { data, error } = await supabase
+        .from("registrations")
+        .insert({ ...fields, email })
+        .select("id")
+        .single();
+      if (error) throw error;
+      regId = data.id;
     }
 
-    return NextResponse.json({ success: true });
+    const order = await razorpay.orders.create({
+      amount: FEE_PAISE,
+      currency: CURRENCY,
+      receipt: String(regId).slice(0, 40),
+      notes: { registration_id: String(regId), email },
+    });
+
+    const { error: linkError } = await supabase
+      .from("registrations")
+      .update({ razorpay_order_id: order.id })
+      .eq("id", regId);
+    if (linkError) throw linkError;
+
+    return NextResponse.json({
+      orderId: order.id,
+      amount: FEE_PAISE,
+      currency: CURRENCY,
+      keyId: process.env.RAZORPAY_KEY_ID,
+    });
   } catch (error) {
     console.error("Registration error:", error);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Registration failed. Please try again." }, { status: 500 });
   }
 }
