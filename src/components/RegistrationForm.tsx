@@ -7,7 +7,7 @@ import { ROLES } from "@/lib/roles";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FEE = "₹249";
+const DEFAULT_FEE = 249;
 const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
 interface RazorpayResponse {
@@ -73,11 +73,20 @@ export default function RegistrationForm() {
   const [form, setForm] = useState<FormData>({
     fullName: "", email: "", phone: "", linkedin: "", rolePreference: "", collegeName: "", courseYear: "", recruitmentType: "",
   });
+  const [fee, setFee] = useState(DEFAULT_FEE);
+  const FEE = `₹${fee}`;
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("/api/fee")
+      .then((r) => r.json())
+      .then((d) => { if (Number.isInteger(d?.fee) && d.fee > 0) setFee(d.fee); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {

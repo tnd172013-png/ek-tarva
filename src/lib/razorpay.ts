@@ -2,8 +2,13 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import { supabase } from "@/lib/supabase";
 
-/** Registration fee in paise. The amount is only ever decided here, on the server. */
-export const FEE_PAISE = 249 * 100;
+/** Registration fee in rupees. Decided only here, on the server.
+ *  FEE_OVERRIDE_RUPEES is for test payments (for example 1). Unset it before launch. */
+const override = Number(process.env.FEE_OVERRIDE_RUPEES);
+export const FEE_OVERRIDDEN = Number.isInteger(override) && override > 0;
+export const FEE_RUPEES = FEE_OVERRIDDEN ? override : 249;
+if (FEE_OVERRIDDEN) console.warn(`FEE_OVERRIDE_RUPEES is set: registrations are charged Rs ${FEE_RUPEES}. Remove it before launch.`);
+export const FEE_PAISE = FEE_RUPEES * 100;
 export const CURRENCY = "INR";
 
 const keyId = process.env.RAZORPAY_KEY_ID;
